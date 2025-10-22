@@ -16,31 +16,52 @@ export class IntersightApiService {
 
   /**
    * Generate Intersight API authentication signature
+   * Supports both RSA and EC (ECDSA) keys
    */
   private generateAuthSignature(
     method: string,
     path: string,
     body: string,
-    timestamp: string
+    timestamp: string,
+    host: string
   ): string {
     const targetHeader = `(request-target): ${method.toLowerCase()} ${path}`;
     const dateHeader = `date: ${timestamp}`;
-    const digestHeader = body ? `digest: SHA-256=${crypto.createHash('sha256').update(body).digest('base64')}` : '';
+    const hostHeader = `host: ${host}`;
+    // For EC keys, always include digest (even if empty for GET requests)
+    const emptyBodyHash = crypto.createHash('sha256').update('').digest('base64');
+    const digestHeader = `digest: SHA-256=${body ? crypto.createHash('sha256').update(body).digest('base64') : emptyBodyHash}`;
     
-    const signatureString = digestHeader 
-      ? `${targetHeader}\n${dateHeader}\n${digestHeader}`
-      : `${targetHeader}\n${dateHeader}`;
+    // Detect key type and use appropriate header list
+    const keyType = this.config.apiSecretKey.includes('BEGIN EC') ? 'EC' : 'RSA';
+    
+    let signatureString: string;
+    let headersList: string;
+    
+    if (keyType === 'EC') {
+      // EC keys require host and digest in signed headers (always)
+      signatureString = `${targetHeader}\n${hostHeader}\n${dateHeader}\n${digestHeader}`;
+      headersList = '(request-target) host date digest';
+    } else {
+      // RSA keys - include digest only if there's a body
+      if (body) {
+        signatureString = `${targetHeader}\n${dateHeader}\n${digestHeader}`;
+        headersList = '(request-target) date digest';
+      } else {
+        signatureString = `${targetHeader}\n${dateHeader}`;
+        headersList = '(request-target) date';
+      }
+    }
+
+    const algorithm = keyType === 'EC' ? 'SHA256' : 'RSA-SHA256';
+    const headerAlgorithm = keyType === 'EC' ? 'hs2019' : 'rsa-sha256';
 
     const signature = crypto
-      .createSign('RSA-SHA256')
+      .createSign(algorithm)
       .update(signatureString)
       .sign(this.config.apiSecretKey, 'base64');
 
-    const headers = digestHeader 
-      ? '(request-target) date digest'
-      : '(request-target) date';
-
-    return `Signature keyId="${this.config.apiKeyId}",algorithm="rsa-sha256",headers="${headers}",signature="${signature}"`;
+    return `Signature keyId="${this.config.apiKeyId}",algorithm="${headerAlgorithm}",headers="${headersList}",signature="${signature}"`;
   }
 
   /**
@@ -60,14 +81,16 @@ export class IntersightApiService {
     const headers: Record<string, string> = {
       'Date': timestamp,
       'Host': parsedUrl.host,
-      'Authorization': this.generateAuthSignature(method, path, bodyString, timestamp),
+      'Authorization': this.generateAuthSignature(method, path, bodyString, timestamp, parsedUrl.host),
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     };
 
-    if (bodyString) {
-      headers['Digest'] = `SHA-256=${crypto.createHash('sha256').update(bodyString).digest('base64')}`;
-    }
+    // Always include digest header (required for EC keys in Intersight API v3)
+    const digestHash = bodyString 
+      ? crypto.createHash('sha256').update(bodyString).digest('base64')
+      : crypto.createHash('sha256').update('').digest('base64');
+    headers['Digest'] = `SHA-256=${digestHash}`;
 
     const response = await fetch(url, {
       method,
