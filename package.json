@@ -1,0 +1,25 @@
+{
+  "name": "intersight-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Intersight API",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node build/index.js",
+    "build": "tsc",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "crypto-js": "^4.2.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.5.0",
+    "@types/crypto-js": "^4.2.2"
+  },
+  "author": "",
+  "license": "MIT"
+}

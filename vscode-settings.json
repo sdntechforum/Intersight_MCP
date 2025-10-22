@@ -1,0 +1,13 @@
+{
+  "github.copilot.chat.mcp.servers": {
+    "intersight": {
+      "command": "node",
+      "args": ["/path/to/intersight-mcp-server/build/index.js"],
+      "env": {
+        "INTERSIGHT_API_KEY_ID": "your-api-key-id",
+        "INTERSIGHT_API_SECRET_KEY_PATH": "/path/to/SecretKey.txt",
+        "INTERSIGHT_BASE_URL": "https://intersight.com/api/v1"
+      }
+    }
+  }
+}
