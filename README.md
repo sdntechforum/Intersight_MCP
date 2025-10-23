@@ -119,6 +119,9 @@ npm run build
 
 Watch the Claude Desktop MCP integration in action:
 
-[![Claude Desktop MCP Demo](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://github.com/jim-coyne/Intersight_MCP/raw/main/claude_desktop.mp4)
+<video width="100%" controls autoplay loop muted>
+  <source src="https://github.com/jim-coyne/Intersight_MCP/raw/main/claude_desktop.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
-Or [download the demo video directly](https://github.com/jim-coyne/Intersight_MCP/raw/main/claude_desktop.mp4)
+
