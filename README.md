@@ -2,8 +2,6 @@
 
 An MCP (Model Context Protocol) server that enables LLMs to interact with Cisco Intersight APIs. This server exposes Intersight operations as tools for LLM applications.
 
-## Quick Start for VS Code
-
 ### Prerequisites
 - Node.js 16+ installed
 - VSCode with GitHub Copilot or Claude Desktop
@@ -18,7 +16,9 @@ npm run build
 
 ### 2. Configure LLM Client
 
-1. Open VSCode Settings: `Cmd+Shift+P` → "Preferences: Open User Settings (JSON)" -or- Claude Desktop configuration file:
+1. Open VSCode Settings: `Cmd+Shift+P` → "Preferences: Open User Settings (JSON)" 
+
+-or- Claude Desktop configuration file:
 
    - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
    - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
