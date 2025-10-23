@@ -1,27 +1,30 @@
 # Intersight MCP Server
 
-An MCP (Model Context Protocol) server that enables GitHub Copilot in VS Code to interact with Cisco Intersight APIs. This server exposes Intersight operations as tools for LLM applications.
+An MCP (Model Context Protocol) server that enables LLMs to interact with Cisco Intersight APIs. This server exposes Intersight operations as tools for LLM applications.
 
 ## Quick Start for VS Code
 
 ### Prerequisites
 - Node.js 16+ installed
-- VS Code with GitHub Copilot Chat
+- VSCode with GitHub Copilot or Claude Desktop
 - Intersight API credentials (Key ID + Secret Key)
 
 ### 1. Build the Server
 
 ```bash
-cd intersight-mcp-server
 npm install
 npm run build
 ```
 
-### 2. Configure VS Code
+### 2. Configure LLM Client
 
-1. Open VS Code Settings: `Cmd+Shift+P` → "Preferences: Open User Settings (JSON)"
+1. Open VSCode Settings: `Cmd+Shift+P` → "Preferences: Open User Settings (JSON)" -or- Claude Desktop configuration file:
 
-2. Add this configuration to your `settings.json`:
+   - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+   - **Linux:** `~/.config/Claude/claude_desktop_config.json`   
+
+2. Add this configuration to your `settings.json` -or- `claude_desktop_config.json`:
 
 ```json
 {
@@ -39,20 +42,13 @@ npm run build
 }
 ```
 
-   Replace the placeholders:
-   - `/path/to/intersight-mcp-server` with your project directory
-   - `your-api-key-id` with your Intersight API Key ID
-   - `/path/to/SecretKey.txt` with path to your RSA private key file
+3. Reload VS Code: `Cmd+Shift+P` → "Developer: Reload Window" -or- Restart Claude Desktop application.
 
-3. Reload VS Code: `Cmd+Shift+P` → "Developer: Reload Window"
+### 3. Test in LLM Client
 
-### 3. Test in GitHub Copilot Chat
-
-Open Copilot Chat and try:
-- "List all my Intersight compute servers"
-- "Show me all critical alarms"
-- "Create a boot policy named 'WebServer'"
-- "List all server profiles"
+```
+"Show me all critical alarms"
+```
 
 ## Features & Tools (39 Total)
 
@@ -112,38 +108,15 @@ Open Copilot Chat and try:
 ```
 "Show me all servers that are powered on and have critical alarms"
 ```
+![Intersight Dashboard](image2.png)
 
 ### Manage Policies
 ```
 "List all my boot policies and which profiles use each one"
 ```
 
-## API Credentials
+## Demo
 
-You'll need Intersight API credentials to use this server:
+Watch the Claude Desktop MCP integration in action:
 
-1. **Get your API Key ID:**
-   - Log in to your Intersight account
-   - Go to Settings → API Keys
-   - Note your API Key ID
-
-2. **Get your Secret Key:**
-   - Download the private key (PEM format) from the Intersight interface
-   - Save it securely on your computer
-   - Pass the path to the secret key via environment variable
-
-3. **Store securely:**
-   - Never commit credentials to version control
-   - Use absolute paths to your secret key file
-   - The `.gitignore` file excludes auth directories
-
-## Running the Server Standalone
-
-To run the server directly (without VS Code):
-
-```bash
-export INTERSIGHT_API_KEY_ID="your-api-key-id"
-export INTERSIGHT_API_SECRET_KEY_PATH="/path/to/SecretKey.txt"
-export INTERSIGHT_BASE_URL="https://intersight.com/api/v1"
-npm start
-```
+![Claude Desktop MCP Demo](claude_desktop.mp4)
