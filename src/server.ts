@@ -15,12 +15,14 @@ export class IntersightMCPServer {
   constructor() {
     this.server = new Server(
       {
-        name: 'intersight-mcp-server',
+        name: 'intersight',
         version: '1.0.0',
       },
       {
         capabilities: {
-          tools: {},
+          tools: {
+            listChanged: false,
+          },
         },
       }
     );
@@ -255,6 +257,111 @@ export class IntersightMCPServer {
             },
           },
           required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'create_vnic',
+        description: 'Create a vNIC (Ethernet interface) on a LAN connectivity policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the vNIC (e.g., "eth0")',
+            },
+            lanConnectivityPolicyMoid: {
+              type: 'string',
+              description: 'MOID of the LAN connectivity policy',
+            },
+            fabricId: {
+              type: 'string',
+              description: 'Fabric ID: A or B',
+              enum: ['A', 'B'],
+            },
+            ethAdapterPolicyMoid: {
+              type: 'string',
+              description: 'MOID of the Ethernet Adapter policy (e.g., VMware, Linux)',
+            },
+            ethQosPolicyMoid: {
+              type: 'string',
+              description: 'MOID of the Ethernet QoS policy',
+            },
+            ethNetworkGroupPolicyMoid: {
+              type: 'string',
+              description: 'MOID of the Ethernet Network Group Policy (VLAN group)',
+            },
+            macPoolMoid: {
+              type: 'string',
+              description: 'MOID of the MAC address pool (optional)',
+            },
+            order: {
+              type: 'number',
+              description: 'vNIC order/placement (default: 0)',
+            },
+            vlans: {
+              type: 'array',
+              description: 'Array of VLAN IDs to assign',
+              items: {
+                type: 'number',
+              },
+            },
+          },
+          required: ['name', 'lanConnectivityPolicyMoid', 'fabricId', 'ethAdapterPolicyMoid', 'ethQosPolicyMoid', 'ethNetworkGroupPolicyMoid'],
+        },
+      },
+      {
+        name: 'create_vlan_group',
+        description: 'Create an Ethernet Network Group Policy (VLAN group) for vNICs',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the VLAN group policy',
+            },
+            description: {
+              type: 'string',
+              description: 'Description of the VLAN group',
+            },
+            vlanIds: {
+              type: 'array',
+              description: 'Array of VLAN IDs to include in this group',
+              items: {
+                type: 'number',
+              },
+            },
+            nativeVlan: {
+              type: 'number',
+              description: 'Native VLAN ID (optional)',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'vlanIds', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'create_eth_network_policy',
+        description: 'Create a vNIC Ethernet Network Policy that references a VLAN group',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the Ethernet Network Policy',
+            },
+            vlanGroupMoid: {
+              type: 'string',
+              description: 'MOID of the fabric.EthNetworkGroupPolicy (VLAN group)',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'vlanGroupMoid', 'organizationMoid'],
         },
       },
       {
@@ -757,6 +864,85 @@ export class IntersightMCPServer {
           Name: args.name,
           Description: args.description,
           TargetPlatform: args.targetPlatform,
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'create_vnic':
+        const vnicData: any = {
+          ObjectType: 'vnic.EthIf',
+          Name: args.name,
+          Order: args.order || 0,
+          Placement: {
+            SwitchId: args.fabricId,
+            Id: 'MLOM',
+          },
+          MacAddressType: args.macPoolMoid ? 'POOL' : 'POOL',
+          LanConnectivityPolicy: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'vnic.LanConnectivityPolicy',
+            Moid: args.lanConnectivityPolicyMoid,
+          },
+          EthAdapterPolicy: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'vnic.EthAdapterPolicy',
+            Moid: args.ethAdapterPolicyMoid,
+          },
+          EthQosPolicy: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'vnic.EthQosPolicy',
+            Moid: args.ethQosPolicyMoid,
+          },
+          FabricEthNetworkGroupPolicy: [{
+            ClassId: 'mo.MoRef',
+            ObjectType: 'fabric.EthNetworkGroupPolicy',
+            Moid: args.ethNetworkGroupPolicyMoid,
+          }],
+        };
+        
+        if (args.macPoolMoid) {
+          vnicData.MacPool = {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'macpool.Pool',
+            Moid: args.macPoolMoid,
+          };
+        }
+        
+        return this.apiService.createPolicy('vnic/EthIfs', vnicData);
+      
+      case 'create_vlan_group':
+        const vlanSettings = args.vlanIds.map((vlanId: number) => ({
+          VlanId: vlanId,
+          Name: `VLAN${vlanId}`,
+          DefaultVlan: args.nativeVlan === vlanId,
+          AutoAllowOnUplinks: true,
+        }));
+        
+        return this.apiService.createPolicy('fabric/EthNetworkGroupPolicies', {
+          ObjectType: 'fabric.EthNetworkGroupPolicy',
+          Name: args.name,
+          Description: args.description || `VLAN group for VLANs: ${args.vlanIds.join(', ')}`,
+          VlanSettings: {
+            ClassId: 'fabric.VlanSettings',
+            ObjectType: 'fabric.VlanSettings',
+            AllowedVlans: args.vlanIds.join(','),
+            NativeVlan: args.nativeVlan || args.vlanIds[0],
+          },
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'create_eth_network_policy':
+        return this.apiService.createPolicy('vnic/EthNetworkPolicies', {
+          ObjectType: 'vnic.EthNetworkPolicy',
+          Name: args.name,
+          VlanSettings: args.vlanGroupMoid,
           Organization: {
             ClassId: 'mo.MoRef',
             ObjectType: 'organization.Organization',
