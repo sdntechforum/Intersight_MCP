@@ -50,7 +50,7 @@ npm run build
 "Show me all critical alarms"
 ```
 
-![Intersight Dashboard](image1.png)
+![Intersight Dashboard](images/image1.png)
 
 ## Features & Tools (85 Total)
 
@@ -197,7 +197,7 @@ npm run build
 "Show me all servers that are powered on and have critical alarms"
 ```
 
-![Intersight Dashboard](image2.png)
+![Intersight Dashboard](images/image2.png)
 
 ### Manage Policies
 
@@ -205,13 +205,13 @@ npm run build
 "List all my boot policies and which profiles use each one"
 ```
 
-![Intersight Dashboard](image3.png)
+![Intersight Dashboard](images/image3.png)
 
 ## Demo
 
 Watch the Claude Desktop MCP integration in action:
 
-![Claude Desktop MCP Demo](claude_desktop.gif)
+![Claude Desktop MCP Demo](images/claude_desktop.gif)
 
 ## Version History
 
@@ -405,9 +405,7 @@ Watch the Claude Desktop MCP integration in action:
   - Server assignment and deployment
 - ✅ **Advanced Search**
   - OData query support for all Intersight resources
-- ✅ **MCP Integration**
-  - VS Code GitHub Copilot support
-  - Claude Desktop integration
-  - Stdio-based Model Context Protocol server
+
+https://www.cisco.com/c/en/us/support/docs/cloud-systems-management/catalyst-center/223278-harness-the-power-of-mcp-servers.html
 
 
