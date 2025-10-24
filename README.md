@@ -52,7 +52,7 @@ npm run build
 
 ![Intersight Dashboard](image1.png)
 
-## Features & Tools (63 Total)
+## Features & Tools (71 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -126,6 +126,20 @@ npm run build
 
 - `search_resources` - Search any Intersight resource with OData filters
 
+### 🔧 Hardware Compatibility List (HCL)
+
+- `list_hcl_operating_systems` - List supported operating systems from HCL
+- `list_hcl_operating_system_vendors` - List OS vendors from HCL
+- `list_hcl_hyperflex_compatibility` - List HyperFlex software compatibility information
+
+### 📢 Technical Advisory Management (TAM)
+
+- `list_tam_advisories` - List all technical advisories and field notices
+- `get_tam_advisory` - Get detailed information about a specific advisory
+- `list_tam_advisory_instances` - List which devices are affected by advisories
+- `list_tam_security_advisories` - List security advisories
+- `get_tam_advisory_count` - Get count of advisories by severity
+
 ## Example Use Cases
 
 ### Monitor Infrastructure
@@ -152,7 +166,32 @@ Watch the Claude Desktop MCP integration in action:
 
 ## Version History
 
-### Version 1.0.3 (Current)
+### Version 1.0.4 (Current)
+
+**Released:** October 24, 2025
+
+**Features Added:**
+
+- ✅ **Hardware Compatibility List (HCL) Tools (3 tools)**
+  - `list_hcl_operating_systems` - List supported operating systems from HCL
+  - `list_hcl_operating_system_vendors` - List OS vendors from HCL  
+  - `list_hcl_hyperflex_compatibility` - List HyperFlex software compatibility information
+- ✅ **Technical Advisory Management (TAM) Tools (5 tools)**
+  - `list_tam_advisories` - List all technical advisories and field notices affecting infrastructure
+  - `get_tam_advisory` - Get detailed information about a specific advisory including recommendations
+  - `list_tam_advisory_instances` - List which specific devices are affected by advisories
+  - `list_tam_security_advisories` - List security advisories with CVE information
+  - `get_tam_advisory_count` - Get count of advisories by severity level
+
+**Improvements:**
+
+- Complete visibility into hardware compatibility information
+- Proactive monitoring of technical advisories and security bulletins
+- Direct access to field notices and affected device tracking
+- Enhanced infrastructure risk management capabilities
+- Tool count increased from 63 to 71 tools
+
+### Version 1.0.3
 
 **Released:** October 24, 2025
 

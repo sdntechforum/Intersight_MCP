@@ -1132,6 +1132,110 @@ export class IntersightMCPServer {
           required: ['metricName'],
         },
       },
+
+      // Hardware Compatibility List (HCL) Tools
+      {
+        name: 'list_hcl_operating_systems',
+        description: 'List supported operating systems from Hardware Compatibility List',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (e.g., "Version contains \'Red Hat\'")',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_hcl_operating_system_vendors',
+        description: 'List operating system vendors from Hardware Compatibility List',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_hcl_hyperflex_compatibility',
+        description: 'List HyperFlex software compatibility information',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // Technical Advisory Management (TAM) Tools
+      {
+        name: 'list_tam_advisories',
+        description: 'List all technical advisories and field notices affecting your infrastructure',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (e.g., "Type eq \'fieldNotice\'")',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_tam_advisory',
+        description: 'Get detailed information about a specific advisory',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the advisory definition',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_tam_advisory_instances',
+        description: 'List advisory instances showing which devices are affected by advisories',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (e.g., filter by advisory MOID or affected object type)',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_tam_security_advisories',
+        description: 'List security advisories affecting your infrastructure',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_tam_advisory_count',
+        description: 'Get count of advisories affecting infrastructure by severity',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
     ];
   }
 
@@ -1516,6 +1620,32 @@ export class IntersightMCPServer {
       
       case 'get_top_resources':
         return this.apiService.getTopResources(args.metricName, args.topN, args.resourceType);
+
+      // Hardware Compatibility List (HCL)
+      case 'list_hcl_operating_systems':
+        return this.apiService.get(args.filter ? `/hcl/OperatingSystems?$filter=${args.filter}` : '/hcl/OperatingSystems');
+      
+      case 'list_hcl_operating_system_vendors':
+        return this.apiService.get(args.filter ? `/hcl/OperatingSystemVendors?$filter=${args.filter}` : '/hcl/OperatingSystemVendors');
+      
+      case 'list_hcl_hyperflex_compatibility':
+        return this.apiService.get(args.filter ? `/hcl/HyperflexSoftwareCompatibilityInfos?$filter=${args.filter}` : '/hcl/HyperflexSoftwareCompatibilityInfos');
+
+      // Technical Advisory Management (TAM)
+      case 'list_tam_advisories':
+        return this.apiService.get(args.filter ? `/tam/AdvisoryDefinitions?$filter=${args.filter}` : '/tam/AdvisoryDefinitions');
+      
+      case 'get_tam_advisory':
+        return this.apiService.get(`/tam/AdvisoryDefinitions/${args.moid}`);
+      
+      case 'list_tam_advisory_instances':
+        return this.apiService.get(args.filter ? `/tam/AdvisoryInstances?$filter=${args.filter}` : '/tam/AdvisoryInstances');
+      
+      case 'list_tam_security_advisories':
+        return this.apiService.get(args.filter ? `/tam/SecurityAdvisories?$filter=${args.filter}` : '/tam/SecurityAdvisories');
+      
+      case 'get_tam_advisory_count':
+        return this.apiService.get('/tam/AdvisoryCounts');
 
       default:
         throw new Error(`Unknown tool: ${name}`);
