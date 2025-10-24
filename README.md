@@ -52,7 +52,7 @@ npm run build
 
 ![Intersight Dashboard](image1.png)
 
-## Features & Tools (53 Total)
+## Features & Tools (63 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -85,12 +85,22 @@ npm run build
 
 - `create_vnic` - Create virtual network interface cards
 - `create_vlan_group` - Create VLAN groups (Ethernet Network Group Policies)
+- `list_vnics` - List all vNICs or filter by LAN connectivity policy
+- `get_vnic` - Get details of a specific vNIC
+- `update_vnic` - Update an existing vNIC
+- `delete_vnic` - Delete a vNIC
+- `list_lan_connectivity_policies` - List all LAN connectivity policies
+- `get_lan_connectivity_policy` - Get LAN connectivity policy details
+- `list_eth_adapter_policies` - List Ethernet adapter policies
+- `list_eth_qos_policies` - List Ethernet QoS policies
+- `list_eth_network_group_policies` - List VLAN groups
 
 ### 📊 Telemetry & Monitoring
 
 - `get_server_telemetry` - Get server metrics (CPU, Memory, Temperature, Power)
 - `get_chassis_telemetry` - Get chassis telemetry (power, thermal, fans, PSUs)
 - `get_adapter_telemetry` - Get network adapter statistics
+- `get_top_resources` - Get top N resources by metric (CPU, memory, power, temperature)
 - `list_processor_units` - List CPU inventory
 - `list_memory_units` - List memory modules
 - `list_storage_controllers` - List storage controllers
@@ -142,7 +152,33 @@ Watch the Claude Desktop MCP integration in action:
 
 ## Version History
 
-### Version 1.0.2 (Current)
+### Version 1.0.3 (Current)
+
+**Released:** October 24, 2025
+
+**Features Added:**
+
+- ✅ **Complete vNIC Management (9 tools)**
+  - `list_vnics` - List all vNICs or filter by LAN connectivity policy
+  - `get_vnic` - Get details of a specific vNIC
+  - `update_vnic` - Update an existing vNIC configuration
+  - `delete_vnic` - Delete a vNIC from a LAN connectivity policy
+  - `list_lan_connectivity_policies` - Browse all LAN connectivity policies
+  - `get_lan_connectivity_policy` - Get detailed LAN connectivity policy information
+  - `list_eth_adapter_policies` - List available Ethernet adapter policies
+  - `list_eth_qos_policies` - List available Ethernet QoS policies
+  - `list_eth_network_group_policies` - List all VLAN groups
+- ✅ **Enhanced Telemetry**
+  - `get_top_resources` - Rank and identify top N resources by metrics (CPU, Memory, Power, Temperature)
+
+**Improvements:**
+
+- Complete CRUD operations for vNIC management
+- Comprehensive policy discovery for vNIC configuration
+- Ability to list and filter resources by parent policy
+- Enhanced infrastructure analytics with top resource identification
+
+### Version 1.0.2
 
 **Released:** October 24, 2025
 

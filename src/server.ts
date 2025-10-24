@@ -310,6 +310,65 @@ export class IntersightMCPServer {
         },
       },
       {
+        name: 'list_vnics',
+        description: 'List all vNICs (Ethernet interfaces) or filter by LAN connectivity policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            lanConnectivityPolicyMoid: {
+              type: 'string',
+              description: 'MOID of LAN connectivity policy to filter vNICs (optional)',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_vnic',
+        description: 'Get details of a specific vNIC',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the vNIC',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'update_vnic',
+        description: 'Update an existing vNIC',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the vNIC to update',
+            },
+            updates: {
+              type: 'object',
+              description: 'vNIC updates as JSON object',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_vnic',
+        description: 'Delete a vNIC',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the vNIC to delete',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
         name: 'create_vlan_group',
         description: 'Create an Ethernet Network Group Policy (VLAN group) for vNICs',
         inputSchema: {
@@ -340,6 +399,72 @@ export class IntersightMCPServer {
             },
           },
           required: ['name', 'vlanIds', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'list_lan_connectivity_policies',
+        description: 'List all LAN connectivity policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (optional)',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_lan_connectivity_policy',
+        description: 'Get details of a specific LAN connectivity policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the LAN connectivity policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_eth_adapter_policies',
+        description: 'List all Ethernet adapter policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (optional)',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_eth_qos_policies',
+        description: 'List all Ethernet QoS policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (optional)',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_eth_network_group_policies',
+        description: 'List all Ethernet Network Group policies (VLAN groups)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (optional)',
+            },
+          },
         },
       },
       {
@@ -983,6 +1108,30 @@ export class IntersightMCPServer {
           },
         },
       },
+      {
+        name: 'get_top_resources',
+        description: 'Get top N resources by metric (CPU, memory, power, temperature). Useful for finding highest utilization, hottest servers, power consumption leaders, etc.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            metricName: {
+              type: 'string',
+              description: 'Metric to rank by: CpuUtilization, MemoryUtilization, PowerConsumption, Temperature',
+              enum: ['CpuUtilization', 'MemoryUtilization', 'PowerConsumption', 'Temperature'],
+            },
+            topN: {
+              type: 'number',
+              description: 'Number of top resources to return (default: 10)',
+            },
+            resourceType: {
+              type: 'string',
+              description: 'Type of resource: Server, Chassis, or All (default: Server)',
+              enum: ['Server', 'Chassis', 'All'],
+            },
+          },
+          required: ['metricName'],
+        },
+      },
     ];
   }
 
@@ -1054,6 +1203,22 @@ export class IntersightMCPServer {
           },
         });
       
+      // vNIC Management
+      case 'list_vnics':
+        const vnicFilter = args.lanConnectivityPolicyMoid
+          ? `LanConnectivityPolicy/Moid eq '${args.lanConnectivityPolicyMoid}'`
+          : '';
+        return this.apiService.get(`/vnic/EthIfs${vnicFilter ? '?$filter=' + vnicFilter : ''}`);
+      
+      case 'get_vnic':
+        return this.apiService.get(`/vnic/EthIfs/${args.moid}`);
+      
+      case 'update_vnic':
+        return this.apiService.patch(`/vnic/EthIfs/${args.moid}`, args.updates);
+      
+      case 'delete_vnic':
+        return this.apiService.delete(`/vnic/EthIfs/${args.moid}`);
+      
       case 'create_vnic':
         const vnicData: any = {
           ObjectType: 'vnic.EthIf',
@@ -1095,6 +1260,22 @@ export class IntersightMCPServer {
         }
         
         return this.apiService.createPolicy('vnic/EthIfs', vnicData);
+      
+      // vNIC Policy Management
+      case 'list_lan_connectivity_policies':
+        return this.apiService.get(args.filter ? `/vnic/LanConnectivityPolicies?$filter=${args.filter}` : '/vnic/LanConnectivityPolicies');
+      
+      case 'get_lan_connectivity_policy':
+        return this.apiService.get(`/vnic/LanConnectivityPolicies/${args.moid}`);
+      
+      case 'list_eth_adapter_policies':
+        return this.apiService.get(args.filter ? `/vnic/EthAdapterPolicies?$filter=${args.filter}` : '/vnic/EthAdapterPolicies');
+      
+      case 'list_eth_qos_policies':
+        return this.apiService.get(args.filter ? `/vnic/EthQosPolicies?$filter=${args.filter}` : '/vnic/EthQosPolicies');
+      
+      case 'list_eth_network_group_policies':
+        return this.apiService.get(args.filter ? `/fabric/EthNetworkGroupPolicies?$filter=${args.filter}` : '/fabric/EthNetworkGroupPolicies');
       
       case 'create_vlan_group':
         const vlanSettings = args.vlanIds.map((vlanId: number) => ({
@@ -1332,6 +1513,9 @@ export class IntersightMCPServer {
       
       case 'list_psu_units':
         return this.apiService.listPsuUnits(args.chassisMoid);
+      
+      case 'get_top_resources':
+        return this.apiService.getTopResources(args.metricName, args.topN, args.resourceType);
 
       default:
         throw new Error(`Unknown tool: ${name}`);

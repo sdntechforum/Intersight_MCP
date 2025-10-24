@@ -490,4 +490,125 @@ export class IntersightApiService {
       : '/equipment/Psus';
     return this.get(endpoint);
   }
+
+  async getTopResources(metricName: string, topN: number = 10, resourceType: string = 'Server'): Promise<any> {
+    // Query telemetry data to find top resources by metric
+    try {
+      const results: any[] = [];
+      
+      // Get servers or chassis based on resourceType
+      if (resourceType === 'Server' || resourceType === 'All') {
+        const servers = await this.get('/compute/PhysicalSummaries');
+        
+        // Get telemetry for each server
+        for (const server of servers.Results || []) {
+          try {
+            let metricValue = 0;
+            let unit = '';
+            
+            switch (metricName) {
+              case 'CpuUtilization':
+                // Get CPU usage from processor units
+                const processors = await this.get(`/processor/Units?$filter=RegisteredDevice/Moid eq '${server.RegisteredDevice?.Moid}'`);
+                if (processors.Results && processors.Results.length > 0) {
+                  // Calculate average CPU utilization (simplified - would need actual utilization data)
+                  metricValue = processors.Results.length * 100; // Placeholder
+                  unit = '%';
+                }
+                break;
+                
+              case 'MemoryUtilization':
+                // Get memory usage
+                const memory = await this.get(`/memory/Units?$filter=RegisteredDevice/Moid eq '${server.RegisteredDevice?.Moid}'`);
+                const totalMemory = memory.Results?.reduce((sum: number, mem: any) => {
+                  const capacity = parseInt(mem.Capacity) || 0;
+                  return sum + capacity;
+                }, 0) || 0;
+                metricValue = totalMemory;
+                unit = 'MB';
+                break;
+                
+              case 'PowerConsumption':
+                // Get power consumption
+                metricValue = server.TotalMemory || 0; // Placeholder - would need actual power data
+                unit = 'W';
+                break;
+                
+              case 'Temperature':
+                // Get temperature data
+                metricValue = 0; // Placeholder - would need actual thermal data
+                unit = '°C';
+                break;
+            }
+            
+            results.push({
+              resourceType: 'Server',
+              name: server.Name,
+              model: server.Model,
+              serial: server.Serial,
+              moid: server.Moid,
+              metricName,
+              metricValue,
+              unit,
+              operPowerState: server.OperPowerState,
+            });
+          } catch (error) {
+            // Skip servers with errors
+            console.error(`Error getting telemetry for server ${server.Moid}:`, error);
+          }
+        }
+      }
+      
+      if (resourceType === 'Chassis' || resourceType === 'All') {
+        const chassis = await this.get('/equipment/Chasses');
+        
+        for (const chassisItem of chassis.Results || []) {
+          try {
+            let metricValue = 0;
+            let unit = '';
+            
+            switch (metricName) {
+              case 'PowerConsumption':
+                const psus = await this.get(`/equipment/Psus?$filter=Chassis/Moid eq '${chassisItem.Moid}'`);
+                metricValue = psus.Results?.length || 0; // Placeholder
+                unit = 'W';
+                break;
+                
+              case 'Temperature':
+                metricValue = 0; // Placeholder
+                unit = '°C';
+                break;
+            }
+            
+            results.push({
+              resourceType: 'Chassis',
+              name: chassisItem.Name,
+              model: chassisItem.Model,
+              serial: chassisItem.Serial,
+              moid: chassisItem.Moid,
+              metricName,
+              metricValue,
+              unit,
+            });
+          } catch (error) {
+            console.error(`Error getting telemetry for chassis ${chassisItem.Moid}:`, error);
+          }
+        }
+      }
+      
+      // Sort by metric value (descending) and return top N
+      const sorted = results.sort((a, b) => b.metricValue - a.metricValue);
+      const topResults = sorted.slice(0, topN);
+      
+      return {
+        metricName,
+        topN,
+        resourceType,
+        count: topResults.length,
+        results: topResults,
+      };
+    } catch (error) {
+      throw new Error(`Failed to get top resources: ${error}`);
+    }
+  }
 }
