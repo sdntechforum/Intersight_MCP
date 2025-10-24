@@ -174,8 +174,6 @@ Watch the Claude Desktop MCP integration in action:
 
 ### Version 1.0.5 (Current)
 
-**Released:** October 24, 2025
-
 **Features Added:**
 
 - ✅ **Terminal & System Topology Tools (3 tools)**
@@ -190,11 +188,8 @@ Watch the Claude Desktop MCP integration in action:
 - Enhanced infrastructure mapping and resource tracking
 - Tool count increased from 71 to 74 tools
 
-**Note:** view/ endpoints were evaluated but are not accessible with current API permissions (403 Forbidden). Future releases may include these if access is granted.
-
 ### Version 1.0.4
 
-**Released:** October 24, 2025
 
 **Features Added:**
 
@@ -218,8 +213,6 @@ Watch the Claude Desktop MCP integration in action:
 - Tool count increased from 63 to 71 tools
 
 ### Version 1.0.3
-
-**Released:** October 24, 2025
 
 **Features Added:**
 
@@ -245,8 +238,6 @@ Watch the Claude Desktop MCP integration in action:
 
 ### Version 1.0.2
 
-**Released:** October 24, 2025
-
 **Features Added:**
 
 - ✅ **Telemetry & Monitoring (11 tools)**
@@ -271,8 +262,6 @@ Watch the Claude Desktop MCP integration in action:
 - Full support for infrastructure health metrics
 
 ### Version 1.0.1
-
-**Released:** October 2025
 
 **Features Added:**
 
