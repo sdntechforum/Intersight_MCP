@@ -16,15 +16,11 @@ npm run build
 
 ### 2. Configure LLM Client
 
-1. Open VSCode Settings: `Cmd+Shift+P` → "Preferences: Open User Settings (JSON)" 
+#### For VSCode with GitHub Copilot
 
--or- Claude Desktop configuration file:
+1. Open VSCode Settings: `Cmd+Shift+P` → "Preferences: Open User Settings (JSON)"
 
-   - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
-   - **Linux:** `~/.config/Claude/claude_desktop_config.json`   
-
-2. Add this configuration to your `settings.json` -or- `claude_desktop_config.json`:
+2. Add this configuration to your `settings.json`:
 
 ```json
 {
@@ -42,7 +38,34 @@ npm run build
 }
 ```
 
-3. Reload VS Code: `Cmd+Shift+P` → "Developer: Reload Window" -or- Restart Claude Desktop application.
+3. Reload VS Code: `Cmd+Shift+P` → "Developer: Reload Window"
+
+#### For Claude Desktop
+
+1. Locate your Claude Desktop configuration file:
+   - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+   - **Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+2. Add this configuration to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "intersight": {
+      "command": "node",
+      "args": ["/path/to/intersight-mcp-server/build/index.js"],
+      "env": {
+        "INTERSIGHT_API_KEY_ID": "your-api-key-id",
+        "INTERSIGHT_API_SECRET_KEY_PATH": "/path/to/SecretKey.txt",
+        "INTERSIGHT_BASE_URL": "https://intersight.com/api/v1"
+      }
+    }
+  }
+}
+```
+
+3. Restart Claude Desktop application
 
 ### 3. Test in LLM Client
 
@@ -51,6 +74,30 @@ npm run build
 ```
 
 ![Intersight Dashboard](images/image1.png)
+
+## Example Use Cases
+
+### Monitor Infrastructure
+
+```text
+"Show me all servers that are powered on and have critical alarms"
+```
+
+![Intersight Dashboard](images/image2.png)
+
+### Manage Policies
+
+```text
+"List all my boot policies and which profiles use each one"
+```
+
+![Intersight Dashboard](images/image3.png)
+
+## Demo
+
+Watch the Claude Desktop MCP integration in action:
+
+![Claude Desktop MCP Demo](images/claude_desktop.gif)
 
 ## Features & Tools (196 Total)
 
@@ -98,9 +145,9 @@ npm run build
 - `list_eth_qos_policies` - List Ethernet QoS policies
 - `list_eth_network_group_policies` - List VLAN groups
 
-### ⚙️ Configuration Management (36 tools with full CRUD)
+### ⚙️ Configuration Management 
 
-#### Adapter Configuration (5 tools)
+#### Adapter Configuration 
 
 - `list_adapter_config_policies` - List all Ethernet adapter configuration policies
 - `get_adapter_config_policy` - Get adapter policy details by MOID
@@ -108,7 +155,7 @@ npm run build
 - `update_adapter_config_policy` - Update existing adapter policy
 - `delete_adapter_config_policy` - Delete adapter configuration policy
 
-#### Fabric Port Channels (5 tools)
+#### Fabric Port Channels 
 
 - `list_fabric_port_channels` - List all fabric port channel configurations
 - `get_fabric_port_channel` - Get port channel details by MOID
@@ -116,7 +163,7 @@ npm run build
 - `update_fabric_port_channel` - Update existing port channel
 - `delete_fabric_port_channel` - Delete fabric port channel
 
-#### VLAN Management (5 tools)
+#### VLAN Management 
 
 - `list_fabric_vlans` - List all configured VLANs
 - `get_fabric_vlan` - Get VLAN details by MOID
@@ -124,7 +171,7 @@ npm run build
 - `update_fabric_vlan` - Update existing VLAN
 - `delete_fabric_vlan` - Delete VLAN
 
-#### VSAN/Fibre Channel (5 tools)
+#### VSAN/Fibre Channel 
 
 - `list_fabric_vsans` - List all configured VSANs
 - `get_fabric_vsan` - Get VSAN details by MOID
@@ -132,7 +179,7 @@ npm run build
 - `update_fabric_vsan` - Update existing VSAN
 - `delete_fabric_vsan` - Delete VSAN
 
-#### IP Pool Blocks (5 tools)
+#### IP Pool Blocks 
 
 - `list_ippool_blocks` - List all IP address pool blocks
 - `get_ippool_block` - Get IP pool block details by MOID
@@ -140,7 +187,7 @@ npm run build
 - `update_ippool_block` - Update existing IP pool block
 - `delete_ippool_block` - Delete IP pool block
 
-#### MAC Pool Blocks (5 tools)
+#### MAC Pool Blocks 
 
 - `list_macpool_blocks` - List all MAC address pool blocks
 - `get_macpool_block` - Get MAC pool block details by MOID
@@ -148,7 +195,7 @@ npm run build
 - `update_macpool_block` - Update existing MAC pool block
 - `delete_macpool_block` - Delete MAC pool block
 
-#### FC Pool Blocks (5 tools)
+#### FC Pool Blocks 
 
 - `list_fcpool_blocks` - List all Fibre Channel pool blocks (WWNN/WWPN)
 - `get_fcpool_block` - Get FC pool block details by MOID
@@ -156,13 +203,13 @@ npm run build
 - `update_fcpool_block` - Update existing FC pool block
 - `delete_fcpool_block` - Delete FC pool block
 
-#### Pool Leases (1 tool)
+#### Pool Leases 
 
 - `list_pool_leases` - List all pool leases (IP/MAC/UUID/WWN allocations)
 
-### 🌐 Advanced Networking (30 tools)
+### 🌐 Advanced Networking 
 
-#### Fabric Port Management (5 tools)
+#### Fabric Port Management 
 
 - `list_fabric_ports` - List all fabric interconnect physical ports
 - `get_fabric_port` - Get fabric port details by MOID
@@ -170,7 +217,7 @@ npm run build
 - `list_fabric_server_ports` - List all fabric server ports
 - `list_fabric_port_operations` - List all fabric port operations
 
-#### Flow Control Policies (5 tools)
+#### Flow Control Policies 
 
 - `list_fabric_flow_control_policies` - List all flow control policies
 - `get_fabric_flow_control_policy` - Get flow control policy details
@@ -178,7 +225,7 @@ npm run build
 - `update_fabric_flow_control_policy` - Update flow control policy
 - `delete_fabric_flow_control_policy` - Delete flow control policy
 
-#### Link Control Policies (5 tools)
+#### Link Control Policies 
 
 - `list_fabric_link_control_policies` - List all link control policies
 - `get_fabric_link_control_policy` - Get link control policy details
@@ -186,40 +233,40 @@ npm run build
 - `update_fabric_link_control_policy` - Update link control policy
 - `delete_fabric_link_control_policy` - Delete link control policy
 
-#### Link Aggregation (LACP) Policies (5 tools)
+#### Link Aggregation (LACP) Policies 
 
-- `list_fabric_link_aggregation_policies` - List all LACP policies
-- `get_fabric_link_aggregation_policy` - Get LACP policy details
-- `create_fabric_link_aggregation_policy` - Create LACP policy (rate, suspend settings)
-- `update_fabric_link_aggregation_policy` - Update LACP policy
-- `delete_fabric_link_aggregation_policy` - Delete LACP policy
+- `list_fabric_lacp_policies` - List all LACP policies
+- `get_fabric_lacp_policy` - Get LACP policy details
+- `create_fabric_lacp_policy` - Create LACP policy (rate, suspend settings)
+- `update_fabric_lacp_policy` - Update LACP policy
+- `delete_fabric_lacp_policy` - Delete LACP policy
 
-#### System QoS & Multicast (4 tools)
+#### System QoS & Multicast 
 
 - `list_fabric_system_qos_policies` - List all system QoS policies
 - `get_fabric_system_qos_policy` - Get system QoS policy details
 - `list_fabric_multicast_policies` - List all multicast policies
 - `get_fabric_multicast_policy` - Get multicast policy details
 
-#### Multicast Policy Management (6 tools)
+#### Multicast Policy Management 
 
 - `create_fabric_multicast_policy` - Create multicast policy (IGMP snooping, querier)
 - `update_fabric_multicast_policy` - Update multicast policy
 - `delete_fabric_multicast_policy` - Delete multicast policy
 
-### 🔐 Hardware Security & Management (27 tools)
+### 🔐 Hardware Security & Management 
 
-#### Trusted Platform Module (2 tools)
+#### Trusted Platform Module 
 
 - `list_equipment_tpms` - List all TPM (Trusted Platform Module) devices
 - `get_equipment_tpm` - Get TPM device details
 
-#### Boot Security (2 tools)
+#### Boot Security 
 
 - `list_boot_device_boot_modes` - List all boot device boot modes
 - `list_boot_device_boot_securities` - List all boot device security settings
 
-#### Local Disk Policies (5 tools)
+#### Local Disk Policies 
 
 - `list_storage_local_disk_policies` - List all local disk configuration policies
 - `get_storage_local_disk_policy` - Get local disk policy details
@@ -227,7 +274,7 @@ npm run build
 - `update_storage_local_disk_policy` - Update local disk policy
 - `delete_storage_local_disk_policy` - Delete local disk policy
 
-#### SD Card Policies (5 tools)
+#### SD Card Policies 
 
 - `list_sdcard_policies` - List all SD card policies
 - `get_sdcard_policy` - Get SD card policy details
@@ -235,7 +282,7 @@ npm run build
 - `update_sdcard_policy` - Update SD card policy
 - `delete_sdcard_policy` - Delete SD card policy
 
-#### KVM Policies (5 tools)
+#### KVM Policies 
 
 - `list_kvm_policies` - List all KVM policies
 - `get_kvm_policy` - Get KVM policy details
@@ -243,7 +290,7 @@ npm run build
 - `update_kvm_policy` - Update KVM policy
 - `delete_kvm_policy` - Delete KVM policy
 
-#### Virtual Media Policies (5 tools)
+#### Virtual Media Policies 
 
 - `list_virtual_media_policies` - List all virtual media policies
 - `get_virtual_media_policy` - Get virtual media policy details
@@ -251,16 +298,16 @@ npm run build
 - `update_virtual_media_policy` - Update virtual media policy
 - `delete_virtual_media_policy` - Delete virtual media policy
 
-#### Device Security (3 tools)
+#### Device Security 
 
 - `list_deviceconnector_policies` - List all device connector policies
 - `get_deviceconnector_policy` - Get device connector policy details
 - `list_certificatemanagement_policies` - List all certificate management policies
 - `get_certificatemanagement_policy` - Get certificate policy details
 
-### ⚙️ System Policies (18 tools)
+### ⚙️ System Policies 
 
-#### SNMP Policies (5 tools)
+#### SNMP Policies 
 
 - `list_snmp_policies` - List all SNMP policies
 - `get_snmp_policy` - Get SNMP policy details
@@ -268,7 +315,7 @@ npm run build
 - `update_snmp_policy` - Update SNMP policy
 - `delete_snmp_policy` - Delete SNMP policy
 
-#### Syslog Policies (5 tools)
+#### Syslog Policies 
 
 - `list_syslog_policies` - List all Syslog policies
 - `get_syslog_policy` - Get Syslog policy details
@@ -276,7 +323,7 @@ npm run build
 - `update_syslog_policy` - Update Syslog policy
 - `delete_syslog_policy` - Delete Syslog policy
 
-#### NTP Policies (5 tools)
+#### NTP Policies 
 
 - `list_ntp_policies` - List all NTP policies
 - `get_ntp_policy` - Get NTP policy details
@@ -284,7 +331,7 @@ npm run build
 - `update_ntp_policy` - Update NTP policy
 - `delete_ntp_policy` - Delete NTP policy
 
-#### SMTP Policies (5 tools)
+#### SMTP Policies 
 
 - `list_smtp_policies` - List all SMTP policies
 - `get_smtp_policy` - Get SMTP policy details
@@ -352,7 +399,7 @@ npm run build
 ### ⚙️ Equipment & Hardware
 
 - `list_equipment_io_cards` - List all IO cards in chassis
-- `list_equipment_system_io_controllers` - List all system IO controllers
+- `list_equipment_sys_io_ctrls` - List all system IO controllers
 
 ### 📀 Firmware Management
 
@@ -383,139 +430,115 @@ npm run build
 - `list_management_controllers` - List all management controllers (CIMC, IMC, BMC)
 - `list_management_interfaces` - List all management network interfaces
 
-## Example Use Cases
-
-### Monitor Infrastructure
-
-```text
-"Show me all servers that are powered on and have critical alarms"
-```
-
-![Intersight Dashboard](images/image2.png)
-
-### Manage Policies
-
-```text
-"List all my boot policies and which profiles use each one"
-```
-
-![Intersight Dashboard](images/image3.png)
-
-## Demo
-
-Watch the Claude Desktop MCP integration in action:
-
-![Claude Desktop MCP Demo](images/claude_desktop.gif)
-
 ## Version History
 
 ### Version 1.0.8
 
 **Features Added:**
 
-- ✅ **Fabric Port Management Tools (5 tools)**
+- ✅ **Fabric Port Management Tools**
   - `list_fabric_ports` - List all fabric interconnect physical ports
   - `get_fabric_port` - Get fabric port details by MOID
   - `list_fabric_uplink_ports` - List all fabric uplink ports
   - `list_fabric_server_ports` - List all fabric server ports
   - `list_fabric_port_operations` - List all fabric port operations
 
-- ✅ **Flow Control Policy Tools (5 tools)**
+- ✅ **Flow Control Policy Tools**
   - `list_fabric_flow_control_policies` - List all flow control policies
   - `get_fabric_flow_control_policy` - Get flow control policy details by MOID
   - `create_fabric_flow_control_policy` - Create flow control policy (PFC, send/receive direction)
   - `update_fabric_flow_control_policy` - Update flow control policy
   - `delete_fabric_flow_control_policy` - Delete flow control policy
 
-- ✅ **Link Control Policy Tools (5 tools)**
+- ✅ **Link Control Policy Tools**
   - `list_fabric_link_control_policies` - List all link control policies
   - `get_fabric_link_control_policy` - Get link control policy details by MOID
   - `create_fabric_link_control_policy` - Create link control policy (UDLD settings)
   - `update_fabric_link_control_policy` - Update link control policy
   - `delete_fabric_link_control_policy` - Delete link control policy
 
-- ✅ **Link Aggregation (LACP) Policy Tools (5 tools)**
-  - `list_fabric_link_aggregation_policies` - List all LACP policies
-  - `get_fabric_link_aggregation_policy` - Get LACP policy details by MOID
-  - `create_fabric_link_aggregation_policy` - Create LACP policy (rate, suspend settings)
-  - `update_fabric_link_aggregation_policy` - Update LACP policy
-  - `delete_fabric_link_aggregation_policy` - Delete LACP policy
+- ✅ **Link Aggregation (LACP) Policy Tools**
+  - `list_fabric_lacp_policies` - List all LACP policies
+  - `get_fabric_lacp_policy` - Get LACP policy details by MOID
+  - `create_fabric_lacp_policy` - Create LACP policy (rate, suspend settings)
+  - `update_fabric_lacp_policy` - Update LACP policy
+  - `delete_fabric_lacp_policy` - Delete LACP policy
 
-- ✅ **System QoS Tools (2 tools)**
+- ✅ **System QoS Tools**
   - `list_fabric_system_qos_policies` - List all system QoS policies
   - `get_fabric_system_qos_policy` - Get system QoS policy details by MOID
 
-- ✅ **Multicast Policy Tools (8 tools)**
+- ✅ **Multicast Policy Tools**
   - `list_fabric_multicast_policies` - List all multicast policies
   - `get_fabric_multicast_policy` - Get multicast policy details by MOID
   - `create_fabric_multicast_policy` - Create multicast policy (IGMP snooping, querier)
   - `update_fabric_multicast_policy` - Update multicast policy
   - `delete_fabric_multicast_policy` - Delete multicast policy
 
-- ✅ **Trusted Platform Module (TPM) Tools (2 tools)**
+- ✅ **Trusted Platform Module (TPM) Tools**
   - `list_equipment_tpms` - List all TPM (Trusted Platform Module) devices
   - `get_equipment_tpm` - Get TPM device details by MOID
 
-- ✅ **Boot Security Tools (2 tools)**
+- ✅ **Boot Security Tools**
   - `list_boot_device_boot_modes` - List all boot device boot modes
   - `list_boot_device_boot_securities` - List all boot device security settings
 
-- ✅ **Local Disk Policy Tools (5 tools)**
+- ✅ **Local Disk Policy Tools**
   - `list_storage_local_disk_policies` - List all local disk configuration policies
   - `get_storage_local_disk_policy` - Get local disk policy details by MOID
   - `create_storage_local_disk_policy` - Create local disk policy (Any Config, No Storage, RAID)
   - `update_storage_local_disk_policy` - Update local disk policy
   - `delete_storage_local_disk_policy` - Delete local disk policy
 
-- ✅ **SD Card Policy Tools (5 tools)**
+- ✅ **SD Card Policy Tools**
   - `list_sdcard_policies` - List all SD card policies
   - `get_sdcard_policy` - Get SD card policy details by MOID
   - `create_sdcard_policy` - Create SD card policy
   - `update_sdcard_policy` - Update SD card policy
   - `delete_sdcard_policy` - Delete SD card policy
 
-- ✅ **KVM Policy Tools (5 tools)**
+- ✅ **KVM Policy Tools**
   - `list_kvm_policies` - List all KVM policies
   - `get_kvm_policy` - Get KVM policy details by MOID
   - `create_kvm_policy` - Create KVM policy (video encryption, max sessions)
   - `update_kvm_policy` - Update KVM policy
   - `delete_kvm_policy` - Delete KVM policy
 
-- ✅ **Virtual Media Policy Tools (5 tools)**
+- ✅ **Virtual Media Policy Tools**
   - `list_virtual_media_policies` - List all virtual media policies
   - `get_virtual_media_policy` - Get virtual media policy details by MOID
   - `create_virtual_media_policy` - Create virtual media policy
   - `update_virtual_media_policy` - Update virtual media policy
   - `delete_virtual_media_policy` - Delete virtual media policy
 
-- ✅ **Device Security Tools (4 tools)**
+- ✅ **Device Security Tools**
   - `list_deviceconnector_policies` - List all device connector policies
   - `get_deviceconnector_policy` - Get device connector policy details by MOID
   - `list_certificatemanagement_policies` - List all certificate management policies
   - `get_certificatemanagement_policy` - Get certificate policy details by MOID
 
-- ✅ **SNMP Policy Tools (5 tools)**
+- ✅ **SNMP Policy Tools**
   - `list_snmp_policies` - List all SNMP policies
   - `get_snmp_policy` - Get SNMP policy details by MOID
   - `create_snmp_policy` - Create SNMP policy (port, enable/disable)
   - `update_snmp_policy` - Update SNMP policy
   - `delete_snmp_policy` - Delete SNMP policy
 
-- ✅ **Syslog Policy Tools (5 tools)**
+- ✅ **Syslog Policy Tools**
   - `list_syslog_policies` - List all Syslog policies
   - `get_syslog_policy` - Get Syslog policy details by MOID
   - `create_syslog_policy` - Create Syslog policy
   - `update_syslog_policy` - Update Syslog policy
   - `delete_syslog_policy` - Delete Syslog policy
 
-- ✅ **NTP Policy Tools (5 tools)**
+- ✅ **NTP Policy Tools**
   - `list_ntp_policies` - List all NTP policies
   - `get_ntp_policy` - Get NTP policy details by MOID
   - `create_ntp_policy` - Create NTP policy (servers, timezone)
   - `update_ntp_policy` - Update NTP policy
   - `delete_ntp_policy` - Delete NTP policy
 
-- ✅ **SMTP Policy Tools (5 tools)**
+- ✅ **SMTP Policy Tools**
   - `list_smtp_policies` - List all SMTP policies
   - `get_smtp_policy` - Get SMTP policy details by MOID
   - `create_smtp_policy` - Create SMTP policy (server, port, sender)
@@ -529,62 +552,61 @@ Watch the Claude Desktop MCP integration in action:
 - Complete system policy management for monitoring and notifications
 - Enhanced storage management with local disk and SD card policies
 - Virtual media management for remote installations
-- Tool count increased from 121 to 196 tools
 
 ### Version 1.0.7
 
 **Features Added:**
 
-- ✅ **Adapter Configuration Tools (5 tools)**
+- ✅ **Adapter Configuration Tools**
   - `list_adapter_config_policies` - List all Ethernet adapter configuration policies
   - `get_adapter_config_policy` - Get adapter policy details by MOID
   - `create_adapter_config_policy` - Create new adapter configuration policy
   - `update_adapter_config_policy` - Update existing adapter policy
   - `delete_adapter_config_policy` - Delete adapter configuration policy
 
-- ✅ **Fabric Port Channel Tools (5 tools)**
+- ✅ **Fabric Port Channel Tools**
   - `list_fabric_port_channels` - List all fabric port channel configurations
   - `get_fabric_port_channel` - Get port channel details by MOID
   - `create_fabric_port_channel` - Create new fabric port channel
   - `update_fabric_port_channel` - Update existing port channel
   - `delete_fabric_port_channel` - Delete fabric port channel
 
-- ✅ **VLAN Management Tools (5 tools)**
+- ✅ **VLAN Management Tools**
   - `list_fabric_vlans` - List all configured VLANs
   - `get_fabric_vlan` - Get VLAN details by MOID
   - `create_fabric_vlan` - Create new VLAN
   - `update_fabric_vlan` - Update existing VLAN
   - `delete_fabric_vlan` - Delete VLAN
 
-- ✅ **VSAN/Fibre Channel Tools (5 tools)**
+- ✅ **VSAN/Fibre Channel Tools**
   - `list_fabric_vsans` - List all configured VSANs
   - `get_fabric_vsan` - Get VSAN details by MOID
   - `create_fabric_vsan` - Create new VSAN
   - `update_fabric_vsan` - Update existing VSAN
   - `delete_fabric_vsan` - Delete VSAN
 
-- ✅ **IP Pool Block Tools (5 tools)**
+- ✅ **IP Pool Block Tools**
   - `list_ippool_blocks` - List all IP address pool blocks
   - `get_ippool_block` - Get IP pool block details by MOID
   - `create_ippool_block` - Create new IP address block in pool
   - `update_ippool_block` - Update existing IP pool block
   - `delete_ippool_block` - Delete IP pool block
 
-- ✅ **MAC Pool Block Tools (5 tools)**
+- ✅ **MAC Pool Block Tools**
   - `list_macpool_blocks` - List all MAC address pool blocks
   - `get_macpool_block` - Get MAC pool block details by MOID
   - `create_macpool_block` - Create new MAC address block in pool
   - `update_macpool_block` - Update existing MAC pool block
   - `delete_macpool_block` - Delete MAC pool block
 
-- ✅ **FC Pool Block Tools (5 tools)**
+- ✅ **FC Pool Block Tools**
   - `list_fcpool_blocks` - List all Fibre Channel pool blocks (WWNN/WWPN)
   - `get_fcpool_block` - Get FC pool block details by MOID
   - `create_fcpool_block` - Create new FC address block in pool
   - `update_fcpool_block` - Update existing FC pool block
   - `delete_fcpool_block` - Delete FC pool block
 
-- ✅ **Pool Lease Tools (1 tool)**
+- ✅ **Pool Lease Tools**
   - `list_pool_leases` - List all pool leases (IP/MAC/UUID/WWN allocations)
 
 **Improvements:**
@@ -593,46 +615,45 @@ Watch the Claude Desktop MCP integration in action:
 - Comprehensive fabric network management (port channels, VLANs, VSANs)
 - Advanced resource pool block management for IP, MAC, and Fibre Channel addresses
 - Enhanced adapter configuration policy management
-- Tool count increased from 85 to 121 tools
 
-### Version 1.0.6 (Current)
+### Version 1.0.6
 
 **Features Added:**
 
-- ✅ **Compute Inventory Tools (3 tools)**
+- ✅ **Compute Inventory Tools**
   - `list_compute_blades` - List all blade servers in chassis
   - `list_compute_rack_units` - List all rack-mounted servers  
   - `list_compute_boards` - List all server motherboards
 
-- ✅ **Storage Management Tools (3 tools)**
+- ✅ **Storage Management Tools**
   - `list_storage_virtual_drives` - List all virtual drives (RAID volumes)
   - `list_storage_flex_flash_controllers` - List all FlexFlash controllers
   - `list_storage_flex_flash_drives` - List all FlexFlash physical drives
 
-- ✅ **Equipment & Hardware Tools (2 tools)**
+- ✅ **Equipment & Hardware Tools**
   - `list_equipment_io_cards` - List all IO cards in chassis
-  - `list_equipment_system_io_controllers` - List all system IO controllers
+  - `list_equipment_sys_io_ctrls` - List all system IO controllers
 
-- ✅ **Firmware Management Tools (2 tools)**
+- ✅ **Firmware Management Tools**
   - `list_firmware_running` - List all running firmware versions across infrastructure
   - `list_firmware_upgrades` - List all firmware upgrade operations
 
-- ✅ **License Management Tools (1 tool)**
+- ✅ **License Management Tools**
   - `list_licenses` - List all license information for registered devices
 
-- ✅ **Workflow Automation Tools (3 tools)**
+- ✅ **Workflow Automation Tools**
   - `list_workflows` - List all workflow executions
   - `get_workflow` - Get details of a specific workflow execution
   - `list_workflow_tasks` - List all workflow task executions
 
-- ✅ **PCI & Hardware Device Tools (2 tools)**
+- ✅ **PCI & Hardware Device Tools**
   - `list_pci_devices` - List all PCI devices (NICs, HBAs, GPUs, etc.)
   - `list_graphics_cards` - List all graphics cards (GPUs)
 
-- ✅ **BIOS & Firmware Tools (1 tool)**
+- ✅ **BIOS & Firmware Tools**
   - `list_bios_units` - List all BIOS/UEFI firmware units
 
-- ✅ **Management Controller Tools (2 tools)**
+- ✅ **Management Controller Tools**
   - `list_management_controllers` - List all management controllers (CIMC, IMC, BMC)
   - `list_management_interfaces` - List all management network interfaces
 
@@ -650,7 +671,7 @@ Watch the Claude Desktop MCP integration in action:
 
 **Features Added:**
 
-- ✅ **Terminal & System Topology Tools (3 tools)**
+- ✅ **Terminal & System Topology Tools**
   - `list_terminal_audit_logs` - List terminal session audit logs for compliance and security monitoring
   - `list_top_systems` - List all top-level systems with associated compute resources (blades and rack units)
   - `get_top_system` - Get detailed information about a specific system including compute resources and network elements
@@ -660,18 +681,16 @@ Watch the Claude Desktop MCP integration in action:
 - Terminal session audit logging for security compliance
 - System topology visibility with compute resource associations
 - Enhanced infrastructure mapping and resource tracking
-- Tool count increased from 71 to 74 tools
 
 ### Version 1.0.4
 
-
 **Features Added:**
 
-- ✅ **Hardware Compatibility List (HCL) Tools (3 tools)**
+- ✅ **Hardware Compatibility List (HCL) Tools**
   - `list_hcl_operating_systems` - List supported operating systems from HCL
   - `list_hcl_operating_system_vendors` - List OS vendors from HCL  
   - `list_hcl_hyperflex_compatibility` - List HyperFlex software compatibility information
-- ✅ **Technical Advisory Management (TAM) Tools (5 tools)**
+- ✅ **Technical Advisory Management (TAM) Tools**
   - `list_tam_advisories` - List all technical advisories and field notices affecting infrastructure
   - `get_tam_advisory` - Get detailed information about a specific advisory including recommendations
   - `list_tam_advisory_instances` - List which specific devices are affected by advisories
@@ -684,13 +703,12 @@ Watch the Claude Desktop MCP integration in action:
 - Proactive monitoring of technical advisories and security bulletins
 - Direct access to field notices and affected device tracking
 - Enhanced infrastructure risk management capabilities
-- Tool count increased from 63 to 71 tools
 
 ### Version 1.0.3
 
 **Features Added:**
 
-- ✅ **Complete vNIC Management (9 tools)**
+- ✅ **Complete vNIC Management**
   - `list_vnics` - List all vNICs or filter by LAN connectivity policy
   - `get_vnic` - Get details of a specific vNIC
   - `update_vnic` - Update an existing vNIC configuration

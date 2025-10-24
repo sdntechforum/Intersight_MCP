@@ -1612,7 +1612,7 @@ export class IntersightMCPServer {
         },
       },
       {
-        name: 'list_fabric_link_aggregation_policies',
+        name: 'list_fabric_lacp_policies',
         description: 'List all link aggregation (LACP) policies',
         inputSchema: {
           type: 'object',
@@ -1625,7 +1625,7 @@ export class IntersightMCPServer {
         },
       },
       {
-        name: 'get_fabric_link_aggregation_policy',
+        name: 'get_fabric_lacp_policy',
         description: 'Get details of a specific link aggregation policy',
         inputSchema: {
           type: 'object',
@@ -1639,7 +1639,7 @@ export class IntersightMCPServer {
         },
       },
       {
-        name: 'create_fabric_link_aggregation_policy',
+        name: 'create_fabric_lacp_policy',
         description: 'Create a link aggregation (LACP) policy',
         inputSchema: {
           type: 'object',
@@ -1666,7 +1666,7 @@ export class IntersightMCPServer {
         },
       },
       {
-        name: 'update_fabric_link_aggregation_policy',
+        name: 'update_fabric_lacp_policy',
         description: 'Update a link aggregation policy',
         inputSchema: {
           type: 'object',
@@ -1684,7 +1684,7 @@ export class IntersightMCPServer {
         },
       },
       {
-        name: 'delete_fabric_link_aggregation_policy',
+        name: 'delete_fabric_lacp_policy',
         description: 'Delete a link aggregation policy',
         inputSchema: {
           type: 'object',
@@ -3223,7 +3223,7 @@ export class IntersightMCPServer {
         },
       },
       {
-        name: 'list_equipment_system_io_controllers',
+        name: 'list_equipment_sys_io_ctrls',
         description: 'List all system IO controllers',
         inputSchema: {
           type: 'object',
@@ -3935,13 +3935,13 @@ export class IntersightMCPServer {
       case 'delete_fabric_link_control_policy':
         return this.apiService.delete(`/fabric/LinkControlPolicies/${args.moid}`);
       
-      case 'list_fabric_link_aggregation_policies':
+      case 'list_fabric_lacp_policies':
         return this.apiService.get(args.filter ? `/fabric/LinkAggregationPolicies?$filter=${args.filter}` : '/fabric/LinkAggregationPolicies');
       
-      case 'get_fabric_link_aggregation_policy':
+      case 'get_fabric_lacp_policy':
         return this.apiService.get(`/fabric/LinkAggregationPolicies/${args.moid}`);
       
-      case 'create_fabric_link_aggregation_policy':
+      case 'create_fabric_lacp_policy':
         return this.apiService.post('/fabric/LinkAggregationPolicies', {
           ObjectType: 'fabric.LinkAggregationPolicy',
           Name: args.name,
@@ -3954,10 +3954,10 @@ export class IntersightMCPServer {
           },
         });
       
-      case 'update_fabric_link_aggregation_policy':
+      case 'update_fabric_lacp_policy':
         return this.apiService.patch(`/fabric/LinkAggregationPolicies/${args.moid}`, args.updates);
       
-      case 'delete_fabric_link_aggregation_policy':
+      case 'delete_fabric_lacp_policy':
         return this.apiService.delete(`/fabric/LinkAggregationPolicies/${args.moid}`);
       
       case 'list_fabric_system_qos_policies':
@@ -4374,7 +4374,7 @@ export class IntersightMCPServer {
       case 'list_equipment_io_cards':
         return this.apiService.get(args.filter ? `/equipment/IoCards?$filter=${args.filter}` : '/equipment/IoCards');
       
-      case 'list_equipment_system_io_controllers':
+      case 'list_equipment_sys_io_ctrls':
         return this.apiService.get(args.filter ? `/equipment/SystemIoControllers?$filter=${args.filter}` : '/equipment/SystemIoControllers');
 
       // Firmware
