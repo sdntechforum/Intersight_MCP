@@ -52,7 +52,7 @@ npm run build
 
 ![Intersight Dashboard](images/image1.png)
 
-## Features & Tools (85 Total)
+## Features & Tools (121 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -97,6 +97,68 @@ npm run build
 - `list_eth_adapter_policies` - List Ethernet adapter policies
 - `list_eth_qos_policies` - List Ethernet QoS policies
 - `list_eth_network_group_policies` - List VLAN groups
+
+### ⚙️ Configuration Management (36 tools with full CRUD)
+
+#### Adapter Configuration (5 tools)
+
+- `list_adapter_config_policies` - List all Ethernet adapter configuration policies
+- `get_adapter_config_policy` - Get adapter policy details by MOID
+- `create_adapter_config_policy` - Create new adapter configuration policy
+- `update_adapter_config_policy` - Update existing adapter policy
+- `delete_adapter_config_policy` - Delete adapter configuration policy
+
+#### Fabric Port Channels (5 tools)
+
+- `list_fabric_port_channels` - List all fabric port channel configurations
+- `get_fabric_port_channel` - Get port channel details by MOID
+- `create_fabric_port_channel` - Create new fabric port channel
+- `update_fabric_port_channel` - Update existing port channel
+- `delete_fabric_port_channel` - Delete fabric port channel
+
+#### VLAN Management (5 tools)
+
+- `list_fabric_vlans` - List all configured VLANs
+- `get_fabric_vlan` - Get VLAN details by MOID
+- `create_fabric_vlan` - Create new VLAN
+- `update_fabric_vlan` - Update existing VLAN
+- `delete_fabric_vlan` - Delete VLAN
+
+#### VSAN/Fibre Channel (5 tools)
+
+- `list_fabric_vsans` - List all configured VSANs
+- `get_fabric_vsan` - Get VSAN details by MOID
+- `create_fabric_vsan` - Create new VSAN
+- `update_fabric_vsan` - Update existing VSAN
+- `delete_fabric_vsan` - Delete VSAN
+
+#### IP Pool Blocks (5 tools)
+
+- `list_ippool_blocks` - List all IP address pool blocks
+- `get_ippool_block` - Get IP pool block details by MOID
+- `create_ippool_block` - Create new IP address block in pool
+- `update_ippool_block` - Update existing IP pool block
+- `delete_ippool_block` - Delete IP pool block
+
+#### MAC Pool Blocks (5 tools)
+
+- `list_macpool_blocks` - List all MAC address pool blocks
+- `get_macpool_block` - Get MAC pool block details by MOID
+- `create_macpool_block` - Create new MAC address block in pool
+- `update_macpool_block` - Update existing MAC pool block
+- `delete_macpool_block` - Delete MAC pool block
+
+#### FC Pool Blocks (5 tools)
+
+- `list_fcpool_blocks` - List all Fibre Channel pool blocks (WWNN/WWPN)
+- `get_fcpool_block` - Get FC pool block details by MOID
+- `create_fcpool_block` - Create new FC address block in pool
+- `update_fcpool_block` - Update existing FC pool block
+- `delete_fcpool_block` - Delete FC pool block
+
+#### Pool Leases (1 tool)
+
+- `list_pool_leases` - List all pool leases (IP/MAC/UUID/WWN allocations)
 
 ### 📊 Telemetry & Monitoring
 
@@ -214,6 +276,28 @@ Watch the Claude Desktop MCP integration in action:
 ![Claude Desktop MCP Demo](images/claude_desktop.gif)
 
 ## Version History
+
+### Version 1.0.7
+
+**Features Added:**
+
+- ✅ **Configuration Management Tools (36 tools with full CRUD operations)**
+  - **Adapter Configuration (5 tools)** - Create, read, update, delete Ethernet adapter policies
+  - **Fabric Port Channels (5 tools)** - Complete port channel management with CRUD
+  - **VLAN Management (5 tools)** - Full VLAN configuration and management
+  - **VSAN/Fibre Channel (5 tools)** - Complete VSAN management for Fibre Channel
+  - **IP Pool Blocks (5 tools)** - IP address pool block management with CRUD
+  - **MAC Pool Blocks (5 tools)** - MAC address pool block management with CRUD
+  - **FC Pool Blocks (5 tools)** - Fibre Channel (WWNN/WWPN) pool block management with CRUD
+  - **Pool Leases (1 tool)** - View all resource pool allocations
+
+**Improvements:**
+
+- Complete CRUD operations for all configuration management categories
+- Comprehensive fabric network management (port channels, VLANs, VSANs)
+- Advanced resource pool block management for IP, MAC, and Fibre Channel addresses
+- Enhanced adapter configuration policy management
+- Tool count increased from 85 to 121 tools
 
 ### Version 1.0.6 (Current)
 

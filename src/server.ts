@@ -752,6 +752,623 @@ export class IntersightMCPServer {
         },
       },
 
+      // Configuration Management Tools - Adapter Configuration
+      {
+        name: 'list_adapter_config_policies',
+        description: 'List all Ethernet adapter configuration policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_adapter_config_policy',
+        description: 'Get details of a specific adapter configuration policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the adapter configuration policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_adapter_config_policy',
+        description: 'Create a new Ethernet adapter configuration policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the adapter configuration policy',
+            },
+            description: {
+              type: 'string',
+              description: 'Description of the policy',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+            rssSettings: {
+              type: 'boolean',
+              description: 'Enable RSS (Receive Side Scaling)',
+            },
+            interruptSettings: {
+              type: 'object',
+              description: 'Interrupt settings configuration',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_adapter_config_policy',
+        description: 'Update an existing adapter configuration policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy to update',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON object',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_adapter_config_policy',
+        description: 'Delete an adapter configuration policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy to delete',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
+      // Configuration Management - Fabric Port Channels
+      {
+        name: 'list_fabric_port_channels',
+        description: 'List all fabric port channels',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fabric_port_channel',
+        description: 'Get details of a specific fabric port channel',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the port channel',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_fabric_port_channel',
+        description: 'Create a new fabric port channel',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the port channel',
+            },
+            portChannelId: {
+              type: 'number',
+              description: 'Port channel ID (1-256)',
+            },
+            fabricInterconnectMoid: {
+              type: 'string',
+              description: 'MOID of the fabric interconnect',
+            },
+            adminSpeed: {
+              type: 'string',
+              description: 'Admin speed: Auto, 1Gbps, 10Gbps, 25Gbps, 40Gbps, 100Gbps',
+            },
+          },
+          required: ['name', 'portChannelId', 'fabricInterconnectMoid'],
+        },
+      },
+      {
+        name: 'update_fabric_port_channel',
+        description: 'Update a fabric port channel',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the port channel to update',
+            },
+            updates: {
+              type: 'object',
+              description: 'Port channel updates as JSON object',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_fabric_port_channel',
+        description: 'Delete a fabric port channel',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the port channel to delete',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
+      // Configuration Management - VLANs
+      {
+        name: 'list_fabric_vlans',
+        description: 'List all fabric VLANs',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fabric_vlan',
+        description: 'Get details of a specific VLAN',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the VLAN',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_fabric_vlan',
+        description: 'Create a new fabric VLAN',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the VLAN',
+            },
+            vlanId: {
+              type: 'number',
+              description: 'VLAN ID (1-4094)',
+            },
+            fabricEthNetworkGroupPolicyMoid: {
+              type: 'string',
+              description: 'MOID of the Ethernet Network Group Policy',
+            },
+            isNative: {
+              type: 'boolean',
+              description: 'Set as native VLAN',
+            },
+            multicastPolicyMoid: {
+              type: 'string',
+              description: 'MOID of multicast policy (optional)',
+            },
+          },
+          required: ['name', 'vlanId'],
+        },
+      },
+      {
+        name: 'update_fabric_vlan',
+        description: 'Update a fabric VLAN',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the VLAN to update',
+            },
+            updates: {
+              type: 'object',
+              description: 'VLAN updates as JSON object',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_fabric_vlan',
+        description: 'Delete a fabric VLAN',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the VLAN to delete',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
+      // Configuration Management - VSANs (Fibre Channel)
+      {
+        name: 'list_fabric_vsans',
+        description: 'List all fabric VSANs (Fibre Channel)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fabric_vsan',
+        description: 'Get details of a specific VSAN',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the VSAN',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_fabric_vsan',
+        description: 'Create a new fabric VSAN for Fibre Channel',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the VSAN',
+            },
+            vsanId: {
+              type: 'number',
+              description: 'VSAN ID (1-4094)',
+            },
+            fcZoneSharingMode: {
+              type: 'string',
+              description: 'FC zone sharing mode',
+            },
+            defaultZoning: {
+              type: 'string',
+              description: 'Default zoning: Enabled or Disabled',
+            },
+          },
+          required: ['name', 'vsanId'],
+        },
+      },
+      {
+        name: 'update_fabric_vsan',
+        description: 'Update a fabric VSAN',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the VSAN to update',
+            },
+            updates: {
+              type: 'object',
+              description: 'VSAN updates as JSON object',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_fabric_vsan',
+        description: 'Delete a fabric VSAN',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the VSAN to delete',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
+      // Configuration Management - IP Pool Blocks
+      {
+        name: 'list_ippool_blocks',
+        description: 'List all IP pool blocks',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_ippool_block',
+        description: 'Get details of a specific IP pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the IP pool block',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_ippool_block',
+        description: 'Create a new IP pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            poolMoid: {
+              type: 'string',
+              description: 'MOID of the IP pool',
+            },
+            from: {
+              type: 'string',
+              description: 'Starting IP address',
+            },
+            to: {
+              type: 'string',
+              description: 'Ending IP address',
+            },
+            size: {
+              type: 'number',
+              description: 'Block size',
+            },
+          },
+          required: ['poolMoid', 'from', 'size'],
+        },
+      },
+      {
+        name: 'update_ippool_block',
+        description: 'Update an IP pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the block to update',
+            },
+            updates: {
+              type: 'object',
+              description: 'Block updates as JSON object',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_ippool_block',
+        description: 'Delete an IP pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the block to delete',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
+      // Configuration Management - MAC Pool Blocks
+      {
+        name: 'list_macpool_blocks',
+        description: 'List all MAC pool blocks',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_macpool_block',
+        description: 'Get details of a specific MAC pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the MAC pool block',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_macpool_block',
+        description: 'Create a new MAC pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            poolMoid: {
+              type: 'string',
+              description: 'MOID of the MAC pool',
+            },
+            from: {
+              type: 'string',
+              description: 'Starting MAC address',
+            },
+            to: {
+              type: 'string',
+              description: 'Ending MAC address',
+            },
+            size: {
+              type: 'number',
+              description: 'Block size',
+            },
+          },
+          required: ['poolMoid', 'from', 'size'],
+        },
+      },
+      {
+        name: 'update_macpool_block',
+        description: 'Update a MAC pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the block to update',
+            },
+            updates: {
+              type: 'object',
+              description: 'Block updates as JSON object',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_macpool_block',
+        description: 'Delete a MAC pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the block to delete',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
+      // Configuration Management - FC Pool Blocks (WWNN/WWPN)
+      {
+        name: 'list_fcpool_blocks',
+        description: 'List all Fibre Channel pool blocks (WWNN/WWPN)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fcpool_block',
+        description: 'Get details of a specific FC pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the FC pool block',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_fcpool_block',
+        description: 'Create a new FC pool block (WWNN or WWPN)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            poolMoid: {
+              type: 'string',
+              description: 'MOID of the FC pool',
+            },
+            from: {
+              type: 'string',
+              description: 'Starting WWN address',
+            },
+            to: {
+              type: 'string',
+              description: 'Ending WWN address',
+            },
+            size: {
+              type: 'number',
+              description: 'Block size',
+            },
+          },
+          required: ['poolMoid', 'from', 'size'],
+        },
+      },
+      {
+        name: 'update_fcpool_block',
+        description: 'Update an FC pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the block to update',
+            },
+            updates: {
+              type: 'object',
+              description: 'Block updates as JSON object',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_fcpool_block',
+        description: 'Delete an FC pool block',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the block to delete',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
       // Profile Management Tools
       {
         name: 'list_server_profiles',
@@ -1831,6 +2448,195 @@ export class IntersightMCPServer {
       
       case 'delete_pool':
         return this.apiService.deletePool(args.poolType, args.moid);
+
+      // Configuration Management - Adapter Configuration
+      case 'list_adapter_config_policies':
+        return this.apiService.get(args.filter ? `/vnic/EthAdapterPolicies?$filter=${args.filter}` : '/vnic/EthAdapterPolicies');
+      
+      case 'get_adapter_config_policy':
+        return this.apiService.get(`/vnic/EthAdapterPolicies/${args.moid}`);
+      
+      case 'create_adapter_config_policy':
+        return this.apiService.post('/vnic/EthAdapterPolicies', {
+          ObjectType: 'vnic.EthAdapterPolicy',
+          Name: args.name,
+          Description: args.description,
+          RssSettings: args.rssSettings,
+          InterruptSettings: args.interruptSettings,
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_adapter_config_policy':
+        return this.apiService.patch(`/vnic/EthAdapterPolicies/${args.moid}`, args.updates);
+      
+      case 'delete_adapter_config_policy':
+        return this.apiService.delete(`/vnic/EthAdapterPolicies/${args.moid}`);
+
+      // Configuration Management - Fabric Port Channels
+      case 'list_fabric_port_channels':
+        return this.apiService.get(args.filter ? `/fabric/PortChannels?$filter=${args.filter}` : '/fabric/PortChannels');
+      
+      case 'get_fabric_port_channel':
+        return this.apiService.get(`/fabric/PortChannels/${args.moid}`);
+      
+      case 'create_fabric_port_channel':
+        return this.apiService.post('/fabric/PortChannels', {
+          ObjectType: 'fabric.PortChannel',
+          Name: args.name,
+          PortChannelId: args.portChannelId,
+          AdminSpeed: args.adminSpeed,
+          NetworkElement: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'network.Element',
+            Moid: args.fabricInterconnectMoid,
+          },
+        });
+      
+      case 'update_fabric_port_channel':
+        return this.apiService.patch(`/fabric/PortChannels/${args.moid}`, args.updates);
+      
+      case 'delete_fabric_port_channel':
+        return this.apiService.delete(`/fabric/PortChannels/${args.moid}`);
+
+      // Configuration Management - VLANs
+      case 'list_fabric_vlans':
+        return this.apiService.get(args.filter ? `/fabric/Vlans?$filter=${args.filter}` : '/fabric/Vlans');
+      
+      case 'get_fabric_vlan':
+        return this.apiService.get(`/fabric/Vlans/${args.moid}`);
+      
+      case 'create_fabric_vlan':
+        const vlanData: Record<string, any> = {
+          ObjectType: 'fabric.Vlan',
+          Name: args.name,
+          VlanId: args.vlanId,
+          IsNative: args.isNative || false,
+        };
+        if (args.fabricEthNetworkGroupPolicyMoid) {
+          vlanData.EthNetworkPolicy = {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'fabric.EthNetworkGroupPolicy',
+            Moid: args.fabricEthNetworkGroupPolicyMoid,
+          };
+        }
+        if (args.multicastPolicyMoid) {
+          vlanData.MulticastPolicy = {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'fabric.MulticastPolicy',
+            Moid: args.multicastPolicyMoid,
+          };
+        }
+        return this.apiService.post('/fabric/Vlans', vlanData);
+      
+      case 'update_fabric_vlan':
+        return this.apiService.patch(`/fabric/Vlans/${args.moid}`, args.updates);
+      
+      case 'delete_fabric_vlan':
+        return this.apiService.delete(`/fabric/Vlans/${args.moid}`);
+
+      // Configuration Management - VSANs
+      case 'list_fabric_vsans':
+        return this.apiService.get(args.filter ? `/fabric/Vsans?$filter=${args.filter}` : '/fabric/Vsans');
+      
+      case 'get_fabric_vsan':
+        return this.apiService.get(`/fabric/Vsans/${args.moid}`);
+      
+      case 'create_fabric_vsan':
+        return this.apiService.post('/fabric/Vsans', {
+          ObjectType: 'fabric.Vsan',
+          Name: args.name,
+          VsanId: args.vsanId,
+          FcZoneSharingMode: args.fcZoneSharingMode,
+          DefaultZoning: args.defaultZoning,
+        });
+      
+      case 'update_fabric_vsan':
+        return this.apiService.patch(`/fabric/Vsans/${args.moid}`, args.updates);
+      
+      case 'delete_fabric_vsan':
+        return this.apiService.delete(`/fabric/Vsans/${args.moid}`);
+
+      // Configuration Management - IP Pool Blocks
+      case 'list_ippool_blocks':
+        return this.apiService.get(args.filter ? `/ippool/Blocks?$filter=${args.filter}` : '/ippool/Blocks');
+      
+      case 'get_ippool_block':
+        return this.apiService.get(`/ippool/Blocks/${args.moid}`);
+      
+      case 'create_ippool_block':
+        return this.apiService.post('/ippool/Blocks', {
+          ObjectType: 'ippool.Block',
+          From: args.from,
+          To: args.to,
+          Size: args.size,
+          Pool: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'ippool.Pool',
+            Moid: args.poolMoid,
+          },
+        });
+      
+      case 'update_ippool_block':
+        return this.apiService.patch(`/ippool/Blocks/${args.moid}`, args.updates);
+      
+      case 'delete_ippool_block':
+        return this.apiService.delete(`/ippool/Blocks/${args.moid}`);
+
+      // Configuration Management - MAC Pool Blocks
+      case 'list_macpool_blocks':
+        return this.apiService.get(args.filter ? `/macpool/Blocks?$filter=${args.filter}` : '/macpool/Blocks');
+      
+      case 'get_macpool_block':
+        return this.apiService.get(`/macpool/Blocks/${args.moid}`);
+      
+      case 'create_macpool_block':
+        return this.apiService.post('/macpool/Blocks', {
+          ObjectType: 'macpool.Block',
+          From: args.from,
+          To: args.to,
+          Size: args.size,
+          Pool: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'macpool.Pool',
+            Moid: args.poolMoid,
+          },
+        });
+      
+      case 'update_macpool_block':
+        return this.apiService.patch(`/macpool/Blocks/${args.moid}`, args.updates);
+      
+      case 'delete_macpool_block':
+        return this.apiService.delete(`/macpool/Blocks/${args.moid}`);
+
+      // Configuration Management - FC Pool Blocks
+      case 'list_fcpool_blocks':
+        return this.apiService.get(args.filter ? `/fcpool/Blocks?$filter=${args.filter}` : '/fcpool/Blocks');
+      
+      case 'get_fcpool_block':
+        return this.apiService.get(`/fcpool/Blocks/${args.moid}`);
+      
+      case 'create_fcpool_block':
+        return this.apiService.post('/fcpool/Blocks', {
+          ObjectType: 'fcpool.Block',
+          From: args.from,
+          To: args.to,
+          Size: args.size,
+          Pool: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'fcpool.Pool',
+            Moid: args.poolMoid,
+          },
+        });
+      
+      case 'update_fcpool_block':
+        return this.apiService.patch(`/fcpool/Blocks/${args.moid}`, args.updates);
+      
+      case 'delete_fcpool_block':
+        return this.apiService.delete(`/fcpool/Blocks/${args.moid}`);
 
       // Profile Management
       case 'list_server_profiles':
