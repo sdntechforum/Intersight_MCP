@@ -608,6 +608,24 @@ export class IntersightMCPServer {
           required: ['poolType', 'moid', 'updates'],
         },
       },
+      {
+        name: 'delete_pool',
+        description: 'Delete a pool by type and MOID',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            poolType: {
+              type: 'string',
+              description: 'Pool type path (e.g., "ippool/Pools", "macpool/Pools", "uuidpool/Pools")',
+            },
+            moid: {
+              type: 'string',
+              description: 'MOID of the pool to delete',
+            },
+          },
+          required: ['poolType', 'moid'],
+        },
+      },
 
       // Profile Management Tools
       {
@@ -798,6 +816,171 @@ export class IntersightMCPServer {
             },
           },
           required: ['resourceType'],
+        },
+      },
+
+      // Telemetry & Metrics Tools
+      {
+        name: 'get_server_telemetry',
+        description: 'Get telemetry data for a specific server (CPU, memory, temperature, power)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            serverMoid: {
+              type: 'string',
+              description: 'MOID of the server',
+            },
+            metricType: {
+              type: 'string',
+              description: 'Type of metric: CPU, Memory, Temperature, Power, or All',
+              enum: ['CPU', 'Memory', 'Temperature', 'Power', 'All'],
+            },
+          },
+          required: ['serverMoid'],
+        },
+      },
+      {
+        name: 'get_chassis_telemetry',
+        description: 'Get telemetry data for a chassis (temperature, power, fans)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            chassisMoid: {
+              type: 'string',
+              description: 'MOID of the chassis',
+            },
+          },
+          required: ['chassisMoid'],
+        },
+      },
+      {
+        name: 'get_adapter_telemetry',
+        description: 'Get network adapter telemetry (throughput, errors, link status)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            adapterMoid: {
+              type: 'string',
+              description: 'MOID of the network adapter',
+            },
+          },
+          required: ['adapterMoid'],
+        },
+      },
+      {
+        name: 'list_processor_units',
+        description: 'List all processor units with current utilization',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_memory_units',
+        description: 'List all memory units with health and capacity information',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_storage_controllers',
+        description: 'List storage controllers with health and RAID information',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_physical_drives',
+        description: 'List physical drives with health, capacity, and wear information',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_power_statistics',
+        description: 'Get power consumption statistics for servers or chassis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the server or chassis',
+            },
+            resourceType: {
+              type: 'string',
+              description: 'Resource type: server or chassis',
+              enum: ['server', 'chassis'],
+            },
+          },
+          required: ['moid', 'resourceType'],
+        },
+      },
+      {
+        name: 'get_thermal_statistics',
+        description: 'Get thermal/temperature statistics for servers or chassis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the server or chassis',
+            },
+            resourceType: {
+              type: 'string',
+              description: 'Resource type: server or chassis',
+              enum: ['server', 'chassis'],
+            },
+          },
+          required: ['moid', 'resourceType'],
+        },
+      },
+      {
+        name: 'list_fan_modules',
+        description: 'List fan modules with operational status and speed',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            chassisMoid: {
+              type: 'string',
+              description: 'MOID of the chassis (optional filter)',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_psu_units',
+        description: 'List power supply units with status and output',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            chassisMoid: {
+              type: 'string',
+              description: 'MOID of the chassis (optional filter)',
+            },
+          },
         },
       },
     ];
@@ -1050,6 +1233,9 @@ export class IntersightMCPServer {
       
       case 'update_pool':
         return this.apiService.updatePool(args.poolType, args.moid, args.updates);
+      
+      case 'delete_pool':
+        return this.apiService.deletePool(args.poolType, args.moid);
 
       // Profile Management
       case 'list_server_profiles':
@@ -1112,6 +1298,40 @@ export class IntersightMCPServer {
       // Search & Query
       case 'search_resources':
         return this.apiService.searchResources(args.resourceType, args.filter);
+
+      // Telemetry & Metrics
+      case 'get_server_telemetry':
+        return this.apiService.getServerTelemetry(args.serverMoid, args.metricType);
+      
+      case 'get_chassis_telemetry':
+        return this.apiService.getChassisTelemetry(args.chassisMoid);
+      
+      case 'get_adapter_telemetry':
+        return this.apiService.getAdapterTelemetry(args.adapterMoid);
+      
+      case 'list_processor_units':
+        return this.apiService.listProcessorUnits(args.filter);
+      
+      case 'list_memory_units':
+        return this.apiService.listMemoryUnits(args.filter);
+      
+      case 'list_storage_controllers':
+        return this.apiService.listStorageControllers(args.filter);
+      
+      case 'list_physical_drives':
+        return this.apiService.listPhysicalDrives(args.filter);
+      
+      case 'get_power_statistics':
+        return this.apiService.getPowerStatistics(args.moid, args.resourceType);
+      
+      case 'get_thermal_statistics':
+        return this.apiService.getThermalStatistics(args.moid, args.resourceType);
+      
+      case 'list_fan_modules':
+        return this.apiService.listFanModules(args.chassisMoid);
+      
+      case 'list_psu_units':
+        return this.apiService.listPsuUnits(args.chassisMoid);
 
       default:
         throw new Error(`Unknown tool: ${name}`);

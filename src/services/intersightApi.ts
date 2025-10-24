@@ -189,6 +189,10 @@ export class IntersightApiService {
     return this.patch(`/${poolType}/${moid}`, poolData);
   }
 
+  async deletePool(poolType: string, moid: string): Promise<any> {
+    return this.delete(`/${poolType}/${moid}`);
+  }
+
   // Profiles
   async listServerProfiles(): Promise<any> {
     return this.get('/server/Profiles');
@@ -233,6 +237,257 @@ export class IntersightApiService {
     const endpoint = filter
       ? `/${resourceType}?$filter=${encodeURIComponent(filter)}`
       : `/${resourceType}`;
+    return this.get(endpoint);
+  }
+
+  // Telemetry & Metrics
+  async getServerTelemetry(serverMoid: string, metricType?: string): Promise<any> {
+    const server = await this.get(`/compute/PhysicalSummaries/${serverMoid}`);
+    
+    const telemetryData: any = {
+      serverMoid,
+      serverName: server.Name,
+      model: server.Model,
+      serial: server.Serial,
+      operPowerState: server.OperPowerState,
+      metrics: {}
+    };
+
+    if (!metricType || metricType === 'All' || metricType === 'CPU') {
+      // Get processor information
+      const processors = await this.get(`/processor/Units?$filter=RegisteredDevice/Moid eq '${server.RegisteredDevice?.Moid}'`);
+      telemetryData.metrics.cpu = processors.Results?.map((p: any) => ({
+        id: p.ProcessorId,
+        model: p.Model,
+        cores: p.NumCores,
+        threads: p.NumThreads,
+        speed: p.Speed,
+        temperature: p.Temperature,
+        operState: p.OperState
+      }));
+    }
+
+    if (!metricType || metricType === 'All' || metricType === 'Memory') {
+      // Get memory information
+      const memory = await this.get(`/memory/Units?$filter=RegisteredDevice/Moid eq '${server.RegisteredDevice?.Moid}'`);
+      telemetryData.metrics.memory = {
+        totalCapacity: server.TotalMemory,
+        units: memory.Results?.map((m: any) => ({
+          id: m.MemoryId,
+          capacity: m.Capacity,
+          type: m.Type,
+          speed: m.Speed,
+          operState: m.OperState,
+          temperature: m.Temperature
+        }))
+      };
+    }
+
+    if (!metricType || metricType === 'All' || metricType === 'Temperature') {
+      // Temperature sensors
+      telemetryData.metrics.temperature = {
+        cpuTemperature: server.CpuTemperature,
+        frontPanelTemp: server.FrontPanelTemp,
+        rearPanelTemp: server.RearPanelTemp
+      };
+    }
+
+    if (!metricType || metricType === 'All' || metricType === 'Power') {
+      // Power statistics
+      telemetryData.metrics.power = {
+        allocatedPower: server.AllocatedPower,
+        availablePower: server.AvailablePower,
+        powerState: server.OperPowerState
+      };
+    }
+
+    return telemetryData;
+  }
+
+  async getChassisTelemetry(chassisMoid: string): Promise<any> {
+    const chassis = await this.get(`/equipment/Chasses/${chassisMoid}`);
+    
+    // Get fans
+    const fans = await this.get(`/equipment/FanModules?$filter=Chassis/Moid eq '${chassisMoid}'`);
+    
+    // Get PSUs
+    const psus = await this.get(`/equipment/Psus?$filter=Chassis/Moid eq '${chassisMoid}'`);
+
+    return {
+      chassisMoid,
+      chassisId: chassis.ChassisId,
+      model: chassis.Model,
+      serial: chassis.Serial,
+      operState: chassis.OperState,
+      metrics: {
+        power: {
+          inputPower: chassis.InputPower,
+          outputPower: chassis.OutputPower,
+          powerSupplyUnits: psus.Results?.map((psu: any) => ({
+            id: psu.PsuId,
+            model: psu.Model,
+            output: psu.Output,
+            voltage: psu.Voltage,
+            operState: psu.OperState
+          }))
+        },
+        thermal: {
+          temperature: chassis.Temperature,
+          fanModules: fans.Results?.map((fan: any) => ({
+            id: fan.ModuleId,
+            operState: fan.OperState,
+            fanCount: fan.FanCount,
+            operSpeed: fan.OperSpeed
+          }))
+        }
+      }
+    };
+  }
+
+  async getAdapterTelemetry(adapterMoid: string): Promise<any> {
+    const adapter = await this.get(`/adapter/Units/${adapterMoid}`);
+    
+    // Get adapter host interfaces
+    const interfaces = await this.get(`/adapter/HostEthInterfaces?$filter=AdapterUnit/Moid eq '${adapterMoid}'`);
+
+    return {
+      adapterMoid,
+      adapterId: adapter.AdapterId,
+      model: adapter.Model,
+      serial: adapter.Serial,
+      operState: adapter.OperState,
+      metrics: {
+        interfaces: interfaces.Results?.map((iface: any) => ({
+          name: iface.Name,
+          macAddress: iface.MacAddress,
+          operState: iface.OperState,
+          adminState: iface.AdminState,
+          linkState: iface.LinkState,
+          linkSpeed: iface.LinkSpeed
+        }))
+      }
+    };
+  }
+
+  async listProcessorUnits(filter?: string): Promise<any> {
+    const endpoint = filter
+      ? `/processor/Units?$filter=${encodeURIComponent(filter)}`
+      : '/processor/Units';
+    return this.get(endpoint);
+  }
+
+  async listMemoryUnits(filter?: string): Promise<any> {
+    const endpoint = filter
+      ? `/memory/Units?$filter=${encodeURIComponent(filter)}`
+      : '/memory/Units';
+    return this.get(endpoint);
+  }
+
+  async listStorageControllers(filter?: string): Promise<any> {
+    const endpoint = filter
+      ? `/storage/Controllers?$filter=${encodeURIComponent(filter)}`
+      : '/storage/Controllers';
+    return this.get(endpoint);
+  }
+
+  async listPhysicalDrives(filter?: string): Promise<any> {
+    const endpoint = filter
+      ? `/storage/PhysicalDisks?$filter=${encodeURIComponent(filter)}`
+      : '/storage/PhysicalDisks';
+    return this.get(endpoint);
+  }
+
+  async getPowerStatistics(moid: string, resourceType: string): Promise<any> {
+    if (resourceType === 'server') {
+      const server = await this.get(`/compute/PhysicalSummaries/${moid}`);
+      return {
+        moid,
+        resourceType: 'server',
+        name: server.Name,
+        model: server.Model,
+        power: {
+          allocatedPower: server.AllocatedPower,
+          availablePower: server.AvailablePower,
+          powerState: server.OperPowerState,
+          powerSupplyRedundancy: server.PsuRedundancy
+        }
+      };
+    } else if (resourceType === 'chassis') {
+      const chassis = await this.get(`/equipment/Chasses/${moid}`);
+      const psus = await this.get(`/equipment/Psus?$filter=Chassis/Moid eq '${moid}'`);
+      
+      return {
+        moid,
+        resourceType: 'chassis',
+        chassisId: chassis.ChassisId,
+        model: chassis.Model,
+        power: {
+          inputPower: chassis.InputPower,
+          outputPower: chassis.OutputPower,
+          powerSupplyUnits: psus.Results?.map((psu: any) => ({
+            id: psu.PsuId,
+            model: psu.Model,
+            output: psu.Output,
+            voltage: psu.Voltage,
+            operState: psu.OperState
+          }))
+        }
+      };
+    }
+    throw new Error(`Unsupported resource type: ${resourceType}`);
+  }
+
+  async getThermalStatistics(moid: string, resourceType: string): Promise<any> {
+    if (resourceType === 'server') {
+      const server = await this.get(`/compute/PhysicalSummaries/${moid}`);
+      
+      return {
+        moid,
+        resourceType: 'server',
+        name: server.Name,
+        model: server.Model,
+        thermal: {
+          cpuTemperature: server.CpuTemperature,
+          frontPanelTemp: server.FrontPanelTemp,
+          rearPanelTemp: server.RearPanelTemp,
+          ambientTemp: server.AmbientTemp
+        }
+      };
+    } else if (resourceType === 'chassis') {
+      const chassis = await this.get(`/equipment/Chasses/${moid}`);
+      const fans = await this.get(`/equipment/FanModules?$filter=Chassis/Moid eq '${moid}'`);
+      
+      return {
+        moid,
+        resourceType: 'chassis',
+        chassisId: chassis.ChassisId,
+        model: chassis.Model,
+        thermal: {
+          temperature: chassis.Temperature,
+          ambientTemp: chassis.AmbientTemp,
+          fanModules: fans.Results?.map((fan: any) => ({
+            id: fan.ModuleId,
+            operState: fan.OperState,
+            operSpeed: fan.OperSpeed,
+            fanCount: fan.FanCount
+          }))
+        }
+      };
+    }
+    throw new Error(`Unsupported resource type: ${resourceType}`);
+  }
+
+  async listFanModules(chassisMoid?: string): Promise<any> {
+    const endpoint = chassisMoid
+      ? `/equipment/FanModules?$filter=Chassis/Moid eq '${chassisMoid}'`
+      : '/equipment/FanModules';
+    return this.get(endpoint);
+  }
+
+  async listPsuUnits(chassisMoid?: string): Promise<any> {
+    const endpoint = chassisMoid
+      ? `/equipment/Psus?$filter=Chassis/Moid eq '${chassisMoid}'`
+      : '/equipment/Psus';
     return this.get(endpoint);
   }
 }
