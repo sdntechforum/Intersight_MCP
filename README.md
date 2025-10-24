@@ -52,13 +52,16 @@ npm run build
 
 ![Intersight Dashboard](image1.png)
 
-## Features & Tools (74 Total)
+## Features & Tools (85 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
 - `get_server_details` - Get detailed information about a specific server
 - `list_chassis` - List all equipment chassis
 - `list_fabric_interconnects` - List fabric interconnects and network elements
+- `list_compute_blades` - List all blade servers in chassis
+- `list_compute_rack_units` - List all rack-mounted servers
+- `list_compute_boards` - List all server motherboards
 
 ### 🔔 Monitoring & Alarms
 - `list_alarms` - List active alarms with severity filtering
@@ -146,6 +149,46 @@ npm run build
 - `list_top_systems` - List all top-level systems with compute resources
 - `get_top_system` - Get details of a specific system including blades and rack units
 
+### 💾 Storage Management
+
+- `list_storage_virtual_drives` - List all virtual drives (RAID volumes)
+- `list_storage_flex_flash_controllers` - List all FlexFlash controllers
+- `list_storage_flex_flash_drives` - List all FlexFlash physical drives
+
+### ⚙️ Equipment & Hardware
+
+- `list_equipment_io_cards` - List all IO cards in chassis
+- `list_equipment_system_io_controllers` - List all system IO controllers
+
+### 📀 Firmware Management
+
+- `list_firmware_running` - List all running firmware versions across infrastructure
+- `list_firmware_upgrades` - List all firmware upgrade operations
+
+### 🔑 License Management
+
+- `list_licenses` - List all license information for registered devices
+
+### 🔄 Workflow Automation
+
+- `list_workflows` - List all workflow executions
+- `get_workflow` - Get details of a specific workflow execution
+- `list_workflow_tasks` - List all workflow task executions
+
+### 🎴 PCI & Hardware Devices
+
+- `list_pci_devices` - List all PCI devices (NICs, HBAs, GPUs, etc.)
+- `list_graphics_cards` - List all graphics cards (GPUs)
+
+### 🔧 BIOS & Firmware
+
+- `list_bios_units` - List all BIOS/UEFI firmware units
+
+### 🖧 Management Controllers
+
+- `list_management_controllers` - List all management controllers (CIMC, IMC, BMC)
+- `list_management_interfaces` - List all management network interfaces
+
 ## Example Use Cases
 
 ### Monitor Infrastructure
@@ -172,7 +215,58 @@ Watch the Claude Desktop MCP integration in action:
 
 ## Version History
 
-### Version 1.0.5 (Current)
+### Version 1.0.6 (Current)
+
+**Features Added:**
+
+- ✅ **Compute Inventory Tools (3 tools)**
+  - `list_compute_blades` - List all blade servers in chassis
+  - `list_compute_rack_units` - List all rack-mounted servers  
+  - `list_compute_boards` - List all server motherboards
+
+- ✅ **Storage Management Tools (3 tools)**
+  - `list_storage_virtual_drives` - List all virtual drives (RAID volumes)
+  - `list_storage_flex_flash_controllers` - List all FlexFlash controllers
+  - `list_storage_flex_flash_drives` - List all FlexFlash physical drives
+
+- ✅ **Equipment & Hardware Tools (2 tools)**
+  - `list_equipment_io_cards` - List all IO cards in chassis
+  - `list_equipment_system_io_controllers` - List all system IO controllers
+
+- ✅ **Firmware Management Tools (2 tools)**
+  - `list_firmware_running` - List all running firmware versions across infrastructure
+  - `list_firmware_upgrades` - List all firmware upgrade operations
+
+- ✅ **License Management Tools (1 tool)**
+  - `list_licenses` - List all license information for registered devices
+
+- ✅ **Workflow Automation Tools (3 tools)**
+  - `list_workflows` - List all workflow executions
+  - `get_workflow` - Get details of a specific workflow execution
+  - `list_workflow_tasks` - List all workflow task executions
+
+- ✅ **PCI & Hardware Device Tools (2 tools)**
+  - `list_pci_devices` - List all PCI devices (NICs, HBAs, GPUs, etc.)
+  - `list_graphics_cards` - List all graphics cards (GPUs)
+
+- ✅ **BIOS & Firmware Tools (1 tool)**
+  - `list_bios_units` - List all BIOS/UEFI firmware units
+
+- ✅ **Management Controller Tools (2 tools)**
+  - `list_management_controllers` - List all management controllers (CIMC, IMC, BMC)
+  - `list_management_interfaces` - List all management network interfaces
+
+**Improvements:**
+
+- Comprehensive compute inventory with blade and rack server details
+- Enhanced storage visibility including virtual drives and FlexFlash
+- Firmware version tracking across all infrastructure components
+- License compliance monitoring
+- Workflow execution history and debugging
+- PCI device and GPU inventory
+- Management controller and interface visibility
+
+### Version 1.0.5
 
 **Features Added:**
 

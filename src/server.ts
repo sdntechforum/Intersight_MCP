@@ -1278,6 +1278,274 @@ export class IntersightMCPServer {
           required: ['moid'],
         },
       },
+
+      // Compute Inventory Tools
+      {
+        name: 'list_compute_blades',
+        description: 'List all blade servers in chassis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_compute_rack_units',
+        description: 'List all rack-mounted servers',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_compute_boards',
+        description: 'List all server motherboards',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // Storage Tools
+      {
+        name: 'list_storage_virtual_drives',
+        description: 'List all virtual drives (RAID volumes)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_storage_flex_flash_controllers',
+        description: 'List all FlexFlash controllers',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_storage_flex_flash_drives',
+        description: 'List all FlexFlash physical drives',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // Equipment Tools
+      {
+        name: 'list_equipment_io_cards',
+        description: 'List all IO cards in chassis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_equipment_system_io_controllers',
+        description: 'List all system IO controllers',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // Firmware Tools
+      {
+        name: 'list_firmware_running',
+        description: 'List all running firmware versions across infrastructure',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (e.g., filter by component type)',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_firmware_upgrades',
+        description: 'List all firmware upgrade operations',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // License Tools
+      {
+        name: 'list_licenses',
+        description: 'List all license information for registered devices',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // Workflow Tools
+      {
+        name: 'list_workflows',
+        description: 'List all workflow executions',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (e.g., filter by status or time)',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_workflow',
+        description: 'Get details of a specific workflow execution',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the workflow',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_workflow_tasks',
+        description: 'List all workflow task executions',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // PCI Tools
+      {
+        name: 'list_pci_devices',
+        description: 'List all PCI devices (NICs, HBAs, GPU, etc.)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // Graphics Tools
+      {
+        name: 'list_graphics_cards',
+        description: 'List all graphics cards (GPUs)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // BIOS Tools
+      {
+        name: 'list_bios_units',
+        description: 'List all BIOS/UEFI firmware units',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // Management Tools
+      {
+        name: 'list_management_controllers',
+        description: 'List all management controllers (CIMC, IMC, BMC)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_management_interfaces',
+        description: 'List all management network interfaces',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
     ];
   }
 
@@ -1698,6 +1966,73 @@ export class IntersightMCPServer {
       
       case 'get_top_system':
         return this.apiService.get(`/top/Systems/${args.moid}`);
+
+      // Compute Inventory
+      case 'list_compute_blades':
+        return this.apiService.get(args.filter ? `/compute/Blades?$filter=${args.filter}` : '/compute/Blades');
+      
+      case 'list_compute_rack_units':
+        return this.apiService.get(args.filter ? `/compute/RackUnits?$filter=${args.filter}` : '/compute/RackUnits');
+      
+      case 'list_compute_boards':
+        return this.apiService.get(args.filter ? `/compute/Boards?$filter=${args.filter}` : '/compute/Boards');
+
+      // Storage
+      case 'list_storage_virtual_drives':
+        return this.apiService.get(args.filter ? `/storage/VirtualDrives?$filter=${args.filter}` : '/storage/VirtualDrives');
+      
+      case 'list_storage_flex_flash_controllers':
+        return this.apiService.get(args.filter ? `/storage/FlexFlashControllers?$filter=${args.filter}` : '/storage/FlexFlashControllers');
+      
+      case 'list_storage_flex_flash_drives':
+        return this.apiService.get(args.filter ? `/storage/FlexFlashPhysicalDrives?$filter=${args.filter}` : '/storage/FlexFlashPhysicalDrives');
+
+      // Equipment
+      case 'list_equipment_io_cards':
+        return this.apiService.get(args.filter ? `/equipment/IoCards?$filter=${args.filter}` : '/equipment/IoCards');
+      
+      case 'list_equipment_system_io_controllers':
+        return this.apiService.get(args.filter ? `/equipment/SystemIoControllers?$filter=${args.filter}` : '/equipment/SystemIoControllers');
+
+      // Firmware
+      case 'list_firmware_running':
+        return this.apiService.get(args.filter ? `/firmware/RunningFirmwares?$filter=${args.filter}` : '/firmware/RunningFirmwares');
+      
+      case 'list_firmware_upgrades':
+        return this.apiService.get(args.filter ? `/firmware/Upgrades?$filter=${args.filter}` : '/firmware/Upgrades');
+
+      // License
+      case 'list_licenses':
+        return this.apiService.get(args.filter ? `/license/LicenseInfos?$filter=${args.filter}` : '/license/LicenseInfos');
+
+      // Workflow
+      case 'list_workflows':
+        return this.apiService.get(args.filter ? `/workflow/WorkflowInfos?$filter=${args.filter}` : '/workflow/WorkflowInfos');
+      
+      case 'get_workflow':
+        return this.apiService.get(`/workflow/WorkflowInfos/${args.moid}`);
+      
+      case 'list_workflow_tasks':
+        return this.apiService.get(args.filter ? `/workflow/TaskInfos?$filter=${args.filter}` : '/workflow/TaskInfos');
+
+      // PCI Devices
+      case 'list_pci_devices':
+        return this.apiService.get(args.filter ? `/pci/Devices?$filter=${args.filter}` : '/pci/Devices');
+
+      // Graphics
+      case 'list_graphics_cards':
+        return this.apiService.get(args.filter ? `/graphics/Cards?$filter=${args.filter}` : '/graphics/Cards');
+
+      // BIOS
+      case 'list_bios_units':
+        return this.apiService.get(args.filter ? `/bios/Units?$filter=${args.filter}` : '/bios/Units');
+
+      // Management
+      case 'list_management_controllers':
+        return this.apiService.get(args.filter ? `/management/Controllers?$filter=${args.filter}` : '/management/Controllers');
+      
+      case 'list_management_interfaces':
+        return this.apiService.get(args.filter ? `/management/Interfaces?$filter=${args.filter}` : '/management/Interfaces');
 
       default:
         throw new Error(`Unknown tool: ${name}`);
