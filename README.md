@@ -52,7 +52,7 @@ npm run build
 
 ![Intersight Dashboard](image1.png)
 
-## Features & Tools (71 Total)
+## Features & Tools (74 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -140,6 +140,12 @@ npm run build
 - `list_tam_security_advisories` - List security advisories
 - `get_tam_advisory_count` - Get count of advisories by severity
 
+### 🖥️ Terminal & System Topology
+
+- `list_terminal_audit_logs` - List terminal session audit logs for compliance monitoring
+- `list_top_systems` - List all top-level systems with compute resources
+- `get_top_system` - Get details of a specific system including blades and rack units
+
 ## Example Use Cases
 
 ### Monitor Infrastructure
@@ -166,7 +172,27 @@ Watch the Claude Desktop MCP integration in action:
 
 ## Version History
 
-### Version 1.0.4 (Current)
+### Version 1.0.5 (Current)
+
+**Released:** October 24, 2025
+
+**Features Added:**
+
+- ✅ **Terminal & System Topology Tools (3 tools)**
+  - `list_terminal_audit_logs` - List terminal session audit logs for compliance and security monitoring
+  - `list_top_systems` - List all top-level systems with associated compute resources (blades and rack units)
+  - `get_top_system` - Get detailed information about a specific system including compute resources and network elements
+
+**Improvements:**
+
+- Terminal session audit logging for security compliance
+- System topology visibility with compute resource associations
+- Enhanced infrastructure mapping and resource tracking
+- Tool count increased from 71 to 74 tools
+
+**Note:** view/ endpoints were evaluated but are not accessible with current API permissions (403 Forbidden). Future releases may include these if access is granted.
+
+### Version 1.0.4
 
 **Released:** October 24, 2025
 

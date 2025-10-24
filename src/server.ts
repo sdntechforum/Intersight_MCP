@@ -1236,6 +1236,48 @@ export class IntersightMCPServer {
           properties: {},
         },
       },
+
+      // Terminal & Systems Tools
+      {
+        name: 'list_terminal_audit_logs',
+        description: 'List terminal session audit logs for compliance and security monitoring',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression (e.g., filter by user, device, or time range)',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_top_systems',
+        description: 'List all top-level systems with their associated compute resources (blades and rack units)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_top_system',
+        description: 'Get details of a specific top-level system including compute resources and network elements',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the top-level system',
+            },
+          },
+          required: ['moid'],
+        },
+      },
     ];
   }
 
@@ -1646,6 +1688,16 @@ export class IntersightMCPServer {
       
       case 'get_tam_advisory_count':
         return this.apiService.get('/tam/AdvisoryCounts');
+
+      // Terminal & Systems
+      case 'list_terminal_audit_logs':
+        return this.apiService.get(args.filter ? `/terminal/AuditLogs?$filter=${args.filter}` : '/terminal/AuditLogs');
+      
+      case 'list_top_systems':
+        return this.apiService.get(args.filter ? `/top/Systems?$filter=${args.filter}` : '/top/Systems');
+      
+      case 'get_top_system':
+        return this.apiService.get(`/top/Systems/${args.moid}`);
 
       default:
         throw new Error(`Unknown tool: ${name}`);
