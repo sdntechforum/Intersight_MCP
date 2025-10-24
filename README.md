@@ -52,7 +52,7 @@ npm run build
 
 ![Intersight Dashboard](images/image1.png)
 
-## Features & Tools (121 Total)
+## Features & Tools (196 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -159,6 +159,138 @@ npm run build
 #### Pool Leases (1 tool)
 
 - `list_pool_leases` - List all pool leases (IP/MAC/UUID/WWN allocations)
+
+### 🌐 Advanced Networking (30 tools)
+
+#### Fabric Port Management (5 tools)
+
+- `list_fabric_ports` - List all fabric interconnect physical ports
+- `get_fabric_port` - Get fabric port details by MOID
+- `list_fabric_uplink_ports` - List all fabric uplink ports
+- `list_fabric_server_ports` - List all fabric server ports
+- `list_fabric_port_operations` - List all fabric port operations
+
+#### Flow Control Policies (5 tools)
+
+- `list_fabric_flow_control_policies` - List all flow control policies
+- `get_fabric_flow_control_policy` - Get flow control policy details
+- `create_fabric_flow_control_policy` - Create flow control policy (PFC, send/receive direction)
+- `update_fabric_flow_control_policy` - Update flow control policy
+- `delete_fabric_flow_control_policy` - Delete flow control policy
+
+#### Link Control Policies (5 tools)
+
+- `list_fabric_link_control_policies` - List all link control policies
+- `get_fabric_link_control_policy` - Get link control policy details
+- `create_fabric_link_control_policy` - Create link control policy (UDLD settings)
+- `update_fabric_link_control_policy` - Update link control policy
+- `delete_fabric_link_control_policy` - Delete link control policy
+
+#### Link Aggregation (LACP) Policies (5 tools)
+
+- `list_fabric_link_aggregation_policies` - List all LACP policies
+- `get_fabric_link_aggregation_policy` - Get LACP policy details
+- `create_fabric_link_aggregation_policy` - Create LACP policy (rate, suspend settings)
+- `update_fabric_link_aggregation_policy` - Update LACP policy
+- `delete_fabric_link_aggregation_policy` - Delete LACP policy
+
+#### System QoS & Multicast (4 tools)
+
+- `list_fabric_system_qos_policies` - List all system QoS policies
+- `get_fabric_system_qos_policy` - Get system QoS policy details
+- `list_fabric_multicast_policies` - List all multicast policies
+- `get_fabric_multicast_policy` - Get multicast policy details
+
+#### Multicast Policy Management (6 tools)
+
+- `create_fabric_multicast_policy` - Create multicast policy (IGMP snooping, querier)
+- `update_fabric_multicast_policy` - Update multicast policy
+- `delete_fabric_multicast_policy` - Delete multicast policy
+
+### 🔐 Hardware Security & Management (27 tools)
+
+#### Trusted Platform Module (2 tools)
+
+- `list_equipment_tpms` - List all TPM (Trusted Platform Module) devices
+- `get_equipment_tpm` - Get TPM device details
+
+#### Boot Security (2 tools)
+
+- `list_boot_device_boot_modes` - List all boot device boot modes
+- `list_boot_device_boot_securities` - List all boot device security settings
+
+#### Local Disk Policies (5 tools)
+
+- `list_storage_local_disk_policies` - List all local disk configuration policies
+- `get_storage_local_disk_policy` - Get local disk policy details
+- `create_storage_local_disk_policy` - Create local disk policy (Any Config, No Storage, RAID)
+- `update_storage_local_disk_policy` - Update local disk policy
+- `delete_storage_local_disk_policy` - Delete local disk policy
+
+#### SD Card Policies (5 tools)
+
+- `list_sdcard_policies` - List all SD card policies
+- `get_sdcard_policy` - Get SD card policy details
+- `create_sdcard_policy` - Create SD card policy
+- `update_sdcard_policy` - Update SD card policy
+- `delete_sdcard_policy` - Delete SD card policy
+
+#### KVM Policies (5 tools)
+
+- `list_kvm_policies` - List all KVM policies
+- `get_kvm_policy` - Get KVM policy details
+- `create_kvm_policy` - Create KVM policy (video encryption, max sessions)
+- `update_kvm_policy` - Update KVM policy
+- `delete_kvm_policy` - Delete KVM policy
+
+#### Virtual Media Policies (5 tools)
+
+- `list_virtual_media_policies` - List all virtual media policies
+- `get_virtual_media_policy` - Get virtual media policy details
+- `create_virtual_media_policy` - Create virtual media policy
+- `update_virtual_media_policy` - Update virtual media policy
+- `delete_virtual_media_policy` - Delete virtual media policy
+
+#### Device Security (3 tools)
+
+- `list_deviceconnector_policies` - List all device connector policies
+- `get_deviceconnector_policy` - Get device connector policy details
+- `list_certificatemanagement_policies` - List all certificate management policies
+- `get_certificatemanagement_policy` - Get certificate policy details
+
+### ⚙️ System Policies (18 tools)
+
+#### SNMP Policies (5 tools)
+
+- `list_snmp_policies` - List all SNMP policies
+- `get_snmp_policy` - Get SNMP policy details
+- `create_snmp_policy` - Create SNMP policy (port, enable/disable)
+- `update_snmp_policy` - Update SNMP policy
+- `delete_snmp_policy` - Delete SNMP policy
+
+#### Syslog Policies (5 tools)
+
+- `list_syslog_policies` - List all Syslog policies
+- `get_syslog_policy` - Get Syslog policy details
+- `create_syslog_policy` - Create Syslog policy
+- `update_syslog_policy` - Update Syslog policy
+- `delete_syslog_policy` - Delete Syslog policy
+
+#### NTP Policies (5 tools)
+
+- `list_ntp_policies` - List all NTP policies
+- `get_ntp_policy` - Get NTP policy details
+- `create_ntp_policy` - Create NTP policy (servers, timezone)
+- `update_ntp_policy` - Update NTP policy
+- `delete_ntp_policy` - Delete NTP policy
+
+#### SMTP Policies (5 tools)
+
+- `list_smtp_policies` - List all SMTP policies
+- `get_smtp_policy` - Get SMTP policy details
+- `create_smtp_policy` - Create SMTP policy (server, port, sender)
+- `update_smtp_policy` - Update SMTP policy
+- `delete_smtp_policy` - Delete SMTP policy
 
 ### 📊 Telemetry & Monitoring
 
@@ -277,19 +409,97 @@ Watch the Claude Desktop MCP integration in action:
 
 ## Version History
 
+### Version 1.0.8
+
+**Features Added:**
+
+- ✅ **Advanced Networking Tools (30 tools)**
+  - **Fabric Port Management (5 tools)** - Physical port inventory and operations
+  - **Flow Control Policies (5 tools)** - Priority flow control (PFC) management
+  - **Link Control Policies (5 tools)** - UDLD and link-level control
+  - **Link Aggregation Policies (5 tools)** - LACP configuration and management
+  - **System QoS Policies (2 tools)** - System-level QoS monitoring
+  - **Multicast Policies (8 tools)** - IGMP snooping and multicast querier configuration
+
+- ✅ **Hardware Security & Management Tools (27 tools)**
+  - **TPM (2 tools)** - Trusted Platform Module inventory
+  - **Boot Security (2 tools)** - Boot mode and security settings
+  - **Local Disk Policies (5 tools)** - Disk configuration policies with CRUD
+  - **SD Card Policies (5 tools)** - SD card management with CRUD
+  - **KVM Policies (5 tools)** - KVM access and video encryption with CRUD
+  - **Virtual Media Policies (5 tools)** - Virtual media mounting with CRUD
+  - **Device Security (3 tools)** - Device connector and certificate management
+
+- ✅ **System Policies (18 tools)**
+  - **SNMP Policies (5 tools)** - SNMP configuration with CRUD
+  - **Syslog Policies (5 tools)** - Syslog server configuration with CRUD
+  - **NTP Policies (5 tools)** - Time synchronization with CRUD
+  - **SMTP Policies (5 tools)** - Email notification configuration with CRUD
+
+**Improvements:**
+
+- Comprehensive fabric network control with flow control, link control, and LACP
+- Advanced hardware security management with TPM, boot security, and KVM
+- Complete system policy management for monitoring and notifications
+- Enhanced storage management with local disk and SD card policies
+- Virtual media management for remote installations
+- Tool count increased from 121 to 196 tools
+
 ### Version 1.0.7
 
 **Features Added:**
 
-- ✅ **Configuration Management Tools (36 tools with full CRUD operations)**
-  - **Adapter Configuration (5 tools)** - Create, read, update, delete Ethernet adapter policies
-  - **Fabric Port Channels (5 tools)** - Complete port channel management with CRUD
-  - **VLAN Management (5 tools)** - Full VLAN configuration and management
-  - **VSAN/Fibre Channel (5 tools)** - Complete VSAN management for Fibre Channel
-  - **IP Pool Blocks (5 tools)** - IP address pool block management with CRUD
-  - **MAC Pool Blocks (5 tools)** - MAC address pool block management with CRUD
-  - **FC Pool Blocks (5 tools)** - Fibre Channel (WWNN/WWPN) pool block management with CRUD
-  - **Pool Leases (1 tool)** - View all resource pool allocations
+- ✅ **Adapter Configuration Tools (5 tools)**
+  - `list_adapter_config_policies` - List all Ethernet adapter configuration policies
+  - `get_adapter_config_policy` - Get adapter policy details by MOID
+  - `create_adapter_config_policy` - Create new adapter configuration policy
+  - `update_adapter_config_policy` - Update existing adapter policy
+  - `delete_adapter_config_policy` - Delete adapter configuration policy
+
+- ✅ **Fabric Port Channel Tools (5 tools)**
+  - `list_fabric_port_channels` - List all fabric port channel configurations
+  - `get_fabric_port_channel` - Get port channel details by MOID
+  - `create_fabric_port_channel` - Create new fabric port channel
+  - `update_fabric_port_channel` - Update existing port channel
+  - `delete_fabric_port_channel` - Delete fabric port channel
+
+- ✅ **VLAN Management Tools (5 tools)**
+  - `list_fabric_vlans` - List all configured VLANs
+  - `get_fabric_vlan` - Get VLAN details by MOID
+  - `create_fabric_vlan` - Create new VLAN
+  - `update_fabric_vlan` - Update existing VLAN
+  - `delete_fabric_vlan` - Delete VLAN
+
+- ✅ **VSAN/Fibre Channel Tools (5 tools)**
+  - `list_fabric_vsans` - List all configured VSANs
+  - `get_fabric_vsan` - Get VSAN details by MOID
+  - `create_fabric_vsan` - Create new VSAN
+  - `update_fabric_vsan` - Update existing VSAN
+  - `delete_fabric_vsan` - Delete VSAN
+
+- ✅ **IP Pool Block Tools (5 tools)**
+  - `list_ippool_blocks` - List all IP address pool blocks
+  - `get_ippool_block` - Get IP pool block details by MOID
+  - `create_ippool_block` - Create new IP address block in pool
+  - `update_ippool_block` - Update existing IP pool block
+  - `delete_ippool_block` - Delete IP pool block
+
+- ✅ **MAC Pool Block Tools (5 tools)**
+  - `list_macpool_blocks` - List all MAC address pool blocks
+  - `get_macpool_block` - Get MAC pool block details by MOID
+  - `create_macpool_block` - Create new MAC address block in pool
+  - `update_macpool_block` - Update existing MAC pool block
+  - `delete_macpool_block` - Delete MAC pool block
+
+- ✅ **FC Pool Block Tools (5 tools)**
+  - `list_fcpool_blocks` - List all Fibre Channel pool blocks (WWNN/WWPN)
+  - `get_fcpool_block` - Get FC pool block details by MOID
+  - `create_fcpool_block` - Create new FC address block in pool
+  - `update_fcpool_block` - Update existing FC pool block
+  - `delete_fcpool_block` - Delete FC pool block
+
+- ✅ **Pool Lease Tools (1 tool)**
+  - `list_pool_leases` - List all pool leases (IP/MAC/UUID/WWN allocations)
 
 **Improvements:**
 

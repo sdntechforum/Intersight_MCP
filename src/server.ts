@@ -1369,6 +1369,1236 @@ export class IntersightMCPServer {
         },
       },
 
+      // Advanced Networking - Fabric Ports
+      {
+        name: 'list_fabric_ports',
+        description: 'List all fabric interconnect physical ports',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fabric_port',
+        description: 'Get details of a specific fabric port',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the fabric port',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_fabric_uplink_ports',
+        description: 'List all fabric uplink ports',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_fabric_server_ports',
+        description: 'List all fabric server ports',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_fabric_port_operations',
+        description: 'List all fabric port operations',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+
+      // Network Control Policies
+      {
+        name: 'list_fabric_flow_control_policies',
+        description: 'List all flow control policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fabric_flow_control_policy',
+        description: 'Get details of a specific flow control policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_fabric_flow_control_policy',
+        description: 'Create a flow control policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            priorityFlowControlMode: {
+              type: 'string',
+              description: 'Priority flow control mode: auto, on',
+              enum: ['auto', 'on'],
+            },
+            receiveDirection: {
+              type: 'string',
+              description: 'Receive direction: Disabled, Enabled',
+              enum: ['Disabled', 'Enabled'],
+            },
+            sendDirection: {
+              type: 'string',
+              description: 'Send direction: Disabled, Enabled',
+              enum: ['Disabled', 'Enabled'],
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_fabric_flow_control_policy',
+        description: 'Update a flow control policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_fabric_flow_control_policy',
+        description: 'Delete a flow control policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_fabric_link_control_policies',
+        description: 'List all link control policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fabric_link_control_policy',
+        description: 'Get details of a specific link control policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_fabric_link_control_policy',
+        description: 'Create a link control policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            udldSettings: {
+              type: 'object',
+              description: 'UDLD settings',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_fabric_link_control_policy',
+        description: 'Update a link control policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_fabric_link_control_policy',
+        description: 'Delete a link control policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_fabric_link_aggregation_policies',
+        description: 'List all link aggregation (LACP) policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fabric_link_aggregation_policy',
+        description: 'Get details of a specific link aggregation policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_fabric_link_aggregation_policy',
+        description: 'Create a link aggregation (LACP) policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            lacpRate: {
+              type: 'string',
+              description: 'LACP rate: normal, fast',
+              enum: ['normal', 'fast'],
+            },
+            suspendIndividual: {
+              type: 'boolean',
+              description: 'Suspend individual port',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_fabric_link_aggregation_policy',
+        description: 'Update a link aggregation policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_fabric_link_aggregation_policy',
+        description: 'Delete a link aggregation policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_fabric_system_qos_policies',
+        description: 'List all system QoS policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fabric_system_qos_policy',
+        description: 'Get details of a specific system QoS policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_fabric_multicast_policies',
+        description: 'List all multicast policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_fabric_multicast_policy',
+        description: 'Get details of a specific multicast policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_fabric_multicast_policy',
+        description: 'Create a multicast policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            querierIpAddress: {
+              type: 'string',
+              description: 'Querier IP address',
+            },
+            querierState: {
+              type: 'string',
+              description: 'Querier state: Disabled, Enabled',
+              enum: ['Disabled', 'Enabled'],
+            },
+            snoopingState: {
+              type: 'string',
+              description: 'Snooping state: Disabled, Enabled',
+              enum: ['Disabled', 'Enabled'],
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_fabric_multicast_policy',
+        description: 'Update a multicast policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_fabric_multicast_policy',
+        description: 'Delete a multicast policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
+      // Hardware Security & Management
+      {
+        name: 'list_equipment_tpms',
+        description: 'List all Trusted Platform Module (TPM) devices',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_equipment_tpm',
+        description: 'Get details of a specific TPM device',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the TPM device',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_boot_device_boot_modes',
+        description: 'List all boot device boot modes',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_boot_device_boot_securities',
+        description: 'List all boot device security settings',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'list_storage_local_disk_policies',
+        description: 'List all local disk configuration policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_storage_local_disk_policy',
+        description: 'Get details of a specific local disk policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_storage_local_disk_policy',
+        description: 'Create a local disk configuration policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            mode: {
+              type: 'string',
+              description: 'Disk mode: Any Configuration, No Local Storage, RAID',
+              enum: ['Any Configuration', 'No Local Storage', 'RAID'],
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'mode', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_storage_local_disk_policy',
+        description: 'Update a local disk policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_storage_local_disk_policy',
+        description: 'Delete a local disk policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_sdcard_policies',
+        description: 'List all SD card policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_sdcard_policy',
+        description: 'Get details of a specific SD card policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_sdcard_policy',
+        description: 'Create an SD card policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_sdcard_policy',
+        description: 'Update an SD card policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_sdcard_policy',
+        description: 'Delete an SD card policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_kvm_policies',
+        description: 'List all KVM policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_kvm_policy',
+        description: 'Get details of a specific KVM policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_kvm_policy',
+        description: 'Create a KVM policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            enableLocalServerVideo: {
+              type: 'boolean',
+              description: 'Enable local server video',
+            },
+            enableVideoEncryption: {
+              type: 'boolean',
+              description: 'Enable video encryption',
+            },
+            maximumSessions: {
+              type: 'number',
+              description: 'Maximum concurrent sessions (1-4)',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_kvm_policy',
+        description: 'Update a KVM policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_kvm_policy',
+        description: 'Delete a KVM policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_virtual_media_policies',
+        description: 'List all virtual media policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_virtual_media_policy',
+        description: 'Get details of a specific virtual media policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_virtual_media_policy',
+        description: 'Create a virtual media policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            encryption: {
+              type: 'boolean',
+              description: 'Enable encryption',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_virtual_media_policy',
+        description: 'Update a virtual media policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_virtual_media_policy',
+        description: 'Delete a virtual media policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
+      // System Policies
+      {
+        name: 'list_snmp_policies',
+        description: 'List all SNMP policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_snmp_policy',
+        description: 'Get details of a specific SNMP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_snmp_policy',
+        description: 'Create an SNMP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            enabled: {
+              type: 'boolean',
+              description: 'Enable SNMP',
+            },
+            snmpPort: {
+              type: 'number',
+              description: 'SNMP port (default: 161)',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_snmp_policy',
+        description: 'Update an SNMP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_snmp_policy',
+        description: 'Delete an SNMP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_syslog_policies',
+        description: 'List all Syslog policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_syslog_policy',
+        description: 'Get details of a specific Syslog policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_syslog_policy',
+        description: 'Create a Syslog policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_syslog_policy',
+        description: 'Update a Syslog policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_syslog_policy',
+        description: 'Delete a Syslog policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_ntp_policies',
+        description: 'List all NTP policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_ntp_policy',
+        description: 'Get details of a specific NTP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_ntp_policy',
+        description: 'Create an NTP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            enabled: {
+              type: 'boolean',
+              description: 'Enable NTP',
+            },
+            ntpServers: {
+              type: 'array',
+              description: 'NTP server addresses',
+              items: {
+                type: 'string',
+              },
+            },
+            timezone: {
+              type: 'string',
+              description: 'Timezone',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_ntp_policy',
+        description: 'Update an NTP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_ntp_policy',
+        description: 'Delete an NTP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_smtp_policies',
+        description: 'List all SMTP policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_smtp_policy',
+        description: 'Get details of a specific SMTP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'create_smtp_policy',
+        description: 'Create an SMTP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the policy',
+            },
+            smtpServer: {
+              type: 'string',
+              description: 'SMTP server address',
+            },
+            smtpPort: {
+              type: 'number',
+              description: 'SMTP port (default: 25)',
+            },
+            senderEmail: {
+              type: 'string',
+              description: 'Sender email address',
+            },
+            organizationMoid: {
+              type: 'string',
+              description: 'Organization MOID',
+            },
+          },
+          required: ['name', 'smtpServer', 'organizationMoid'],
+        },
+      },
+      {
+        name: 'update_smtp_policy',
+        description: 'Update an SMTP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+            updates: {
+              type: 'object',
+              description: 'Policy updates as JSON',
+            },
+          },
+          required: ['moid', 'updates'],
+        },
+      },
+      {
+        name: 'delete_smtp_policy',
+        description: 'Delete an SMTP policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_deviceconnector_policies',
+        description: 'List all device connector policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_deviceconnector_policy',
+        description: 'Get details of a specific device connector policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+      {
+        name: 'list_certificatemanagement_policies',
+        description: 'List all certificate management policies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            filter: {
+              type: 'string',
+              description: 'OData filter expression',
+            },
+          },
+        },
+      },
+      {
+        name: 'get_certificatemanagement_policy',
+        description: 'Get details of a specific certificate policy',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            moid: {
+              type: 'string',
+              description: 'MOID of the policy',
+            },
+          },
+          required: ['moid'],
+        },
+      },
+
       // Profile Management Tools
       {
         name: 'list_server_profiles',
@@ -2637,6 +3867,353 @@ export class IntersightMCPServer {
       
       case 'delete_fcpool_block':
         return this.apiService.delete(`/fcpool/Blocks/${args.moid}`);
+
+      // Advanced Networking - Fabric Ports
+      case 'list_fabric_ports':
+        return this.apiService.get(args.filter ? `/fabric/Ports?$filter=${args.filter}` : '/fabric/Ports');
+      
+      case 'get_fabric_port':
+        return this.apiService.get(`/fabric/Ports/${args.moid}`);
+      
+      case 'list_fabric_uplink_ports':
+        return this.apiService.get(args.filter ? `/fabric/UplinkPcRoles?$filter=${args.filter}` : '/fabric/UplinkPcRoles');
+      
+      case 'list_fabric_server_ports':
+        return this.apiService.get(args.filter ? `/fabric/ServerRoles?$filter=${args.filter}` : '/fabric/ServerRoles');
+      
+      case 'list_fabric_port_operations':
+        return this.apiService.get(args.filter ? `/fabric/PortOperations?$filter=${args.filter}` : '/fabric/PortOperations');
+
+      // Network Control Policies
+      case 'list_fabric_flow_control_policies':
+        return this.apiService.get(args.filter ? `/fabric/FlowControlPolicies?$filter=${args.filter}` : '/fabric/FlowControlPolicies');
+      
+      case 'get_fabric_flow_control_policy':
+        return this.apiService.get(`/fabric/FlowControlPolicies/${args.moid}`);
+      
+      case 'create_fabric_flow_control_policy':
+        return this.apiService.post('/fabric/FlowControlPolicies', {
+          ObjectType: 'fabric.FlowControlPolicy',
+          Name: args.name,
+          PriorityFlowControlMode: args.priorityFlowControlMode || 'auto',
+          ReceiveDirection: args.receiveDirection || 'Disabled',
+          SendDirection: args.sendDirection || 'Disabled',
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_fabric_flow_control_policy':
+        return this.apiService.patch(`/fabric/FlowControlPolicies/${args.moid}`, args.updates);
+      
+      case 'delete_fabric_flow_control_policy':
+        return this.apiService.delete(`/fabric/FlowControlPolicies/${args.moid}`);
+      
+      case 'list_fabric_link_control_policies':
+        return this.apiService.get(args.filter ? `/fabric/LinkControlPolicies?$filter=${args.filter}` : '/fabric/LinkControlPolicies');
+      
+      case 'get_fabric_link_control_policy':
+        return this.apiService.get(`/fabric/LinkControlPolicies/${args.moid}`);
+      
+      case 'create_fabric_link_control_policy':
+        return this.apiService.post('/fabric/LinkControlPolicies', {
+          ObjectType: 'fabric.LinkControlPolicy',
+          Name: args.name,
+          UdldSettings: args.udldSettings || {},
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_fabric_link_control_policy':
+        return this.apiService.patch(`/fabric/LinkControlPolicies/${args.moid}`, args.updates);
+      
+      case 'delete_fabric_link_control_policy':
+        return this.apiService.delete(`/fabric/LinkControlPolicies/${args.moid}`);
+      
+      case 'list_fabric_link_aggregation_policies':
+        return this.apiService.get(args.filter ? `/fabric/LinkAggregationPolicies?$filter=${args.filter}` : '/fabric/LinkAggregationPolicies');
+      
+      case 'get_fabric_link_aggregation_policy':
+        return this.apiService.get(`/fabric/LinkAggregationPolicies/${args.moid}`);
+      
+      case 'create_fabric_link_aggregation_policy':
+        return this.apiService.post('/fabric/LinkAggregationPolicies', {
+          ObjectType: 'fabric.LinkAggregationPolicy',
+          Name: args.name,
+          LacpRate: args.lacpRate || 'normal',
+          SuspendIndividual: args.suspendIndividual || false,
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_fabric_link_aggregation_policy':
+        return this.apiService.patch(`/fabric/LinkAggregationPolicies/${args.moid}`, args.updates);
+      
+      case 'delete_fabric_link_aggregation_policy':
+        return this.apiService.delete(`/fabric/LinkAggregationPolicies/${args.moid}`);
+      
+      case 'list_fabric_system_qos_policies':
+        return this.apiService.get(args.filter ? `/fabric/SystemQosPolicies?$filter=${args.filter}` : '/fabric/SystemQosPolicies');
+      
+      case 'get_fabric_system_qos_policy':
+        return this.apiService.get(`/fabric/SystemQosPolicies/${args.moid}`);
+      
+      case 'list_fabric_multicast_policies':
+        return this.apiService.get(args.filter ? `/fabric/MulticastPolicies?$filter=${args.filter}` : '/fabric/MulticastPolicies');
+      
+      case 'get_fabric_multicast_policy':
+        return this.apiService.get(`/fabric/MulticastPolicies/${args.moid}`);
+      
+      case 'create_fabric_multicast_policy':
+        return this.apiService.post('/fabric/MulticastPolicies', {
+          ObjectType: 'fabric.MulticastPolicy',
+          Name: args.name,
+          QuerierIpAddress: args.querierIpAddress || '',
+          QuerierState: args.querierState || 'Disabled',
+          SnoopingState: args.snoopingState || 'Enabled',
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_fabric_multicast_policy':
+        return this.apiService.patch(`/fabric/MulticastPolicies/${args.moid}`, args.updates);
+      
+      case 'delete_fabric_multicast_policy':
+        return this.apiService.delete(`/fabric/MulticastPolicies/${args.moid}`);
+
+      // Hardware Security & Management
+      case 'list_equipment_tpms':
+        return this.apiService.get(args.filter ? `/equipment/Tpms?$filter=${args.filter}` : '/equipment/Tpms');
+      
+      case 'get_equipment_tpm':
+        return this.apiService.get(`/equipment/Tpms/${args.moid}`);
+      
+      case 'list_boot_device_boot_modes':
+        return this.apiService.get(args.filter ? `/boot/DeviceBootModes?$filter=${args.filter}` : '/boot/DeviceBootModes');
+      
+      case 'list_boot_device_boot_securities':
+        return this.apiService.get(args.filter ? `/boot/DeviceBootSecurities?$filter=${args.filter}` : '/boot/DeviceBootSecurities');
+      
+      case 'list_storage_local_disk_policies':
+        return this.apiService.get(args.filter ? `/storage/StoragePolicies?$filter=${args.filter}` : '/storage/StoragePolicies');
+      
+      case 'get_storage_local_disk_policy':
+        return this.apiService.get(`/storage/StoragePolicies/${args.moid}`);
+      
+      case 'create_storage_local_disk_policy':
+        return this.apiService.post('/storage/StoragePolicies', {
+          ObjectType: 'storage.StoragePolicy',
+          Name: args.name,
+          UnusedDisksState: args.mode,
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_storage_local_disk_policy':
+        return this.apiService.patch(`/storage/StoragePolicies/${args.moid}`, args.updates);
+      
+      case 'delete_storage_local_disk_policy':
+        return this.apiService.delete(`/storage/StoragePolicies/${args.moid}`);
+      
+      case 'list_sdcard_policies':
+        return this.apiService.get(args.filter ? `/sdcard/Policies?$filter=${args.filter}` : '/sdcard/Policies');
+      
+      case 'get_sdcard_policy':
+        return this.apiService.get(`/sdcard/Policies/${args.moid}`);
+      
+      case 'create_sdcard_policy':
+        return this.apiService.post('/sdcard/Policies', {
+          ObjectType: 'sdcard.Policy',
+          Name: args.name,
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_sdcard_policy':
+        return this.apiService.patch(`/sdcard/Policies/${args.moid}`, args.updates);
+      
+      case 'delete_sdcard_policy':
+        return this.apiService.delete(`/sdcard/Policies/${args.moid}`);
+      
+      case 'list_kvm_policies':
+        return this.apiService.get(args.filter ? `/kvm/Policies?$filter=${args.filter}` : '/kvm/Policies');
+      
+      case 'get_kvm_policy':
+        return this.apiService.get(`/kvm/Policies/${args.moid}`);
+      
+      case 'create_kvm_policy':
+        return this.apiService.post('/kvm/Policies', {
+          ObjectType: 'kvm.Policy',
+          Name: args.name,
+          EnableLocalServerVideo: args.enableLocalServerVideo !== undefined ? args.enableLocalServerVideo : true,
+          EnableVideoEncryption: args.enableVideoEncryption !== undefined ? args.enableVideoEncryption : true,
+          MaximumSessions: args.maximumSessions || 4,
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_kvm_policy':
+        return this.apiService.patch(`/kvm/Policies/${args.moid}`, args.updates);
+      
+      case 'delete_kvm_policy':
+        return this.apiService.delete(`/kvm/Policies/${args.moid}`);
+      
+      case 'list_virtual_media_policies':
+        return this.apiService.get(args.filter ? `/vmedia/Policies?$filter=${args.filter}` : '/vmedia/Policies');
+      
+      case 'get_virtual_media_policy':
+        return this.apiService.get(`/vmedia/Policies/${args.moid}`);
+      
+      case 'create_virtual_media_policy':
+        return this.apiService.post('/vmedia/Policies', {
+          ObjectType: 'vmedia.Policy',
+          Name: args.name,
+          Encryption: args.encryption !== undefined ? args.encryption : true,
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_virtual_media_policy':
+        return this.apiService.patch(`/vmedia/Policies/${args.moid}`, args.updates);
+      
+      case 'delete_virtual_media_policy':
+        return this.apiService.delete(`/vmedia/Policies/${args.moid}`);
+
+      // System Policies
+      case 'list_snmp_policies':
+        return this.apiService.get(args.filter ? `/snmp/Policies?$filter=${args.filter}` : '/snmp/Policies');
+      
+      case 'get_snmp_policy':
+        return this.apiService.get(`/snmp/Policies/${args.moid}`);
+      
+      case 'create_snmp_policy':
+        return this.apiService.post('/snmp/Policies', {
+          ObjectType: 'snmp.Policy',
+          Name: args.name,
+          Enabled: args.enabled !== undefined ? args.enabled : true,
+          SnmpPort: args.snmpPort || 161,
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_snmp_policy':
+        return this.apiService.patch(`/snmp/Policies/${args.moid}`, args.updates);
+      
+      case 'delete_snmp_policy':
+        return this.apiService.delete(`/snmp/Policies/${args.moid}`);
+      
+      case 'list_syslog_policies':
+        return this.apiService.get(args.filter ? `/syslog/Policies?$filter=${args.filter}` : '/syslog/Policies');
+      
+      case 'get_syslog_policy':
+        return this.apiService.get(`/syslog/Policies/${args.moid}`);
+      
+      case 'create_syslog_policy':
+        return this.apiService.post('/syslog/Policies', {
+          ObjectType: 'syslog.Policy',
+          Name: args.name,
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_syslog_policy':
+        return this.apiService.patch(`/syslog/Policies/${args.moid}`, args.updates);
+      
+      case 'delete_syslog_policy':
+        return this.apiService.delete(`/syslog/Policies/${args.moid}`);
+      
+      case 'list_ntp_policies':
+        return this.apiService.get(args.filter ? `/ntp/Policies?$filter=${args.filter}` : '/ntp/Policies');
+      
+      case 'get_ntp_policy':
+        return this.apiService.get(`/ntp/Policies/${args.moid}`);
+      
+      case 'create_ntp_policy':
+        return this.apiService.post('/ntp/Policies', {
+          ObjectType: 'ntp.Policy',
+          Name: args.name,
+          Enabled: args.enabled !== undefined ? args.enabled : true,
+          NtpServers: args.ntpServers || [],
+          Timezone: args.timezone || 'America/Los_Angeles',
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_ntp_policy':
+        return this.apiService.patch(`/ntp/Policies/${args.moid}`, args.updates);
+      
+      case 'delete_ntp_policy':
+        return this.apiService.delete(`/ntp/Policies/${args.moid}`);
+      
+      case 'list_smtp_policies':
+        return this.apiService.get(args.filter ? `/smtp/Policies?$filter=${args.filter}` : '/smtp/Policies');
+      
+      case 'get_smtp_policy':
+        return this.apiService.get(`/smtp/Policies/${args.moid}`);
+      
+      case 'create_smtp_policy':
+        return this.apiService.post('/smtp/Policies', {
+          ObjectType: 'smtp.Policy',
+          Name: args.name,
+          SmtpServer: args.smtpServer,
+          SmtpPort: args.smtpPort || 25,
+          SenderEmail: args.senderEmail || '',
+          Organization: {
+            ClassId: 'mo.MoRef',
+            ObjectType: 'organization.Organization',
+            Moid: args.organizationMoid,
+          },
+        });
+      
+      case 'update_smtp_policy':
+        return this.apiService.patch(`/smtp/Policies/${args.moid}`, args.updates);
+      
+      case 'delete_smtp_policy':
+        return this.apiService.delete(`/smtp/Policies/${args.moid}`);
+      
+      case 'list_deviceconnector_policies':
+        return this.apiService.get(args.filter ? `/deviceconnector/Policies?$filter=${args.filter}` : '/deviceconnector/Policies');
+      
+      case 'get_deviceconnector_policy':
+        return this.apiService.get(`/deviceconnector/Policies/${args.moid}`);
+      
+      case 'list_certificatemanagement_policies':
+        return this.apiService.get(args.filter ? `/certificatemanagement/Policies?$filter=${args.filter}` : '/certificatemanagement/Policies');
+      
+      case 'get_certificatemanagement_policy':
+        return this.apiService.get(`/certificatemanagement/Policies/${args.moid}`);
 
       // Profile Management
       case 'list_server_profiles':
