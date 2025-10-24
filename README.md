@@ -413,28 +413,114 @@ Watch the Claude Desktop MCP integration in action:
 
 **Features Added:**
 
-- ✅ **Advanced Networking Tools (30 tools)**
-  - **Fabric Port Management (5 tools)** - Physical port inventory and operations
-  - **Flow Control Policies (5 tools)** - Priority flow control (PFC) management
-  - **Link Control Policies (5 tools)** - UDLD and link-level control
-  - **Link Aggregation Policies (5 tools)** - LACP configuration and management
-  - **System QoS Policies (2 tools)** - System-level QoS monitoring
-  - **Multicast Policies (8 tools)** - IGMP snooping and multicast querier configuration
+- ✅ **Fabric Port Management Tools (5 tools)**
+  - `list_fabric_ports` - List all fabric interconnect physical ports
+  - `get_fabric_port` - Get fabric port details by MOID
+  - `list_fabric_uplink_ports` - List all fabric uplink ports
+  - `list_fabric_server_ports` - List all fabric server ports
+  - `list_fabric_port_operations` - List all fabric port operations
 
-- ✅ **Hardware Security & Management Tools (27 tools)**
-  - **TPM (2 tools)** - Trusted Platform Module inventory
-  - **Boot Security (2 tools)** - Boot mode and security settings
-  - **Local Disk Policies (5 tools)** - Disk configuration policies with CRUD
-  - **SD Card Policies (5 tools)** - SD card management with CRUD
-  - **KVM Policies (5 tools)** - KVM access and video encryption with CRUD
-  - **Virtual Media Policies (5 tools)** - Virtual media mounting with CRUD
-  - **Device Security (3 tools)** - Device connector and certificate management
+- ✅ **Flow Control Policy Tools (5 tools)**
+  - `list_fabric_flow_control_policies` - List all flow control policies
+  - `get_fabric_flow_control_policy` - Get flow control policy details by MOID
+  - `create_fabric_flow_control_policy` - Create flow control policy (PFC, send/receive direction)
+  - `update_fabric_flow_control_policy` - Update flow control policy
+  - `delete_fabric_flow_control_policy` - Delete flow control policy
 
-- ✅ **System Policies (18 tools)**
-  - **SNMP Policies (5 tools)** - SNMP configuration with CRUD
-  - **Syslog Policies (5 tools)** - Syslog server configuration with CRUD
-  - **NTP Policies (5 tools)** - Time synchronization with CRUD
-  - **SMTP Policies (5 tools)** - Email notification configuration with CRUD
+- ✅ **Link Control Policy Tools (5 tools)**
+  - `list_fabric_link_control_policies` - List all link control policies
+  - `get_fabric_link_control_policy` - Get link control policy details by MOID
+  - `create_fabric_link_control_policy` - Create link control policy (UDLD settings)
+  - `update_fabric_link_control_policy` - Update link control policy
+  - `delete_fabric_link_control_policy` - Delete link control policy
+
+- ✅ **Link Aggregation (LACP) Policy Tools (5 tools)**
+  - `list_fabric_link_aggregation_policies` - List all LACP policies
+  - `get_fabric_link_aggregation_policy` - Get LACP policy details by MOID
+  - `create_fabric_link_aggregation_policy` - Create LACP policy (rate, suspend settings)
+  - `update_fabric_link_aggregation_policy` - Update LACP policy
+  - `delete_fabric_link_aggregation_policy` - Delete LACP policy
+
+- ✅ **System QoS Tools (2 tools)**
+  - `list_fabric_system_qos_policies` - List all system QoS policies
+  - `get_fabric_system_qos_policy` - Get system QoS policy details by MOID
+
+- ✅ **Multicast Policy Tools (8 tools)**
+  - `list_fabric_multicast_policies` - List all multicast policies
+  - `get_fabric_multicast_policy` - Get multicast policy details by MOID
+  - `create_fabric_multicast_policy` - Create multicast policy (IGMP snooping, querier)
+  - `update_fabric_multicast_policy` - Update multicast policy
+  - `delete_fabric_multicast_policy` - Delete multicast policy
+
+- ✅ **Trusted Platform Module (TPM) Tools (2 tools)**
+  - `list_equipment_tpms` - List all TPM (Trusted Platform Module) devices
+  - `get_equipment_tpm` - Get TPM device details by MOID
+
+- ✅ **Boot Security Tools (2 tools)**
+  - `list_boot_device_boot_modes` - List all boot device boot modes
+  - `list_boot_device_boot_securities` - List all boot device security settings
+
+- ✅ **Local Disk Policy Tools (5 tools)**
+  - `list_storage_local_disk_policies` - List all local disk configuration policies
+  - `get_storage_local_disk_policy` - Get local disk policy details by MOID
+  - `create_storage_local_disk_policy` - Create local disk policy (Any Config, No Storage, RAID)
+  - `update_storage_local_disk_policy` - Update local disk policy
+  - `delete_storage_local_disk_policy` - Delete local disk policy
+
+- ✅ **SD Card Policy Tools (5 tools)**
+  - `list_sdcard_policies` - List all SD card policies
+  - `get_sdcard_policy` - Get SD card policy details by MOID
+  - `create_sdcard_policy` - Create SD card policy
+  - `update_sdcard_policy` - Update SD card policy
+  - `delete_sdcard_policy` - Delete SD card policy
+
+- ✅ **KVM Policy Tools (5 tools)**
+  - `list_kvm_policies` - List all KVM policies
+  - `get_kvm_policy` - Get KVM policy details by MOID
+  - `create_kvm_policy` - Create KVM policy (video encryption, max sessions)
+  - `update_kvm_policy` - Update KVM policy
+  - `delete_kvm_policy` - Delete KVM policy
+
+- ✅ **Virtual Media Policy Tools (5 tools)**
+  - `list_virtual_media_policies` - List all virtual media policies
+  - `get_virtual_media_policy` - Get virtual media policy details by MOID
+  - `create_virtual_media_policy` - Create virtual media policy
+  - `update_virtual_media_policy` - Update virtual media policy
+  - `delete_virtual_media_policy` - Delete virtual media policy
+
+- ✅ **Device Security Tools (4 tools)**
+  - `list_deviceconnector_policies` - List all device connector policies
+  - `get_deviceconnector_policy` - Get device connector policy details by MOID
+  - `list_certificatemanagement_policies` - List all certificate management policies
+  - `get_certificatemanagement_policy` - Get certificate policy details by MOID
+
+- ✅ **SNMP Policy Tools (5 tools)**
+  - `list_snmp_policies` - List all SNMP policies
+  - `get_snmp_policy` - Get SNMP policy details by MOID
+  - `create_snmp_policy` - Create SNMP policy (port, enable/disable)
+  - `update_snmp_policy` - Update SNMP policy
+  - `delete_snmp_policy` - Delete SNMP policy
+
+- ✅ **Syslog Policy Tools (5 tools)**
+  - `list_syslog_policies` - List all Syslog policies
+  - `get_syslog_policy` - Get Syslog policy details by MOID
+  - `create_syslog_policy` - Create Syslog policy
+  - `update_syslog_policy` - Update Syslog policy
+  - `delete_syslog_policy` - Delete Syslog policy
+
+- ✅ **NTP Policy Tools (5 tools)**
+  - `list_ntp_policies` - List all NTP policies
+  - `get_ntp_policy` - Get NTP policy details by MOID
+  - `create_ntp_policy` - Create NTP policy (servers, timezone)
+  - `update_ntp_policy` - Update NTP policy
+  - `delete_ntp_policy` - Delete NTP policy
+
+- ✅ **SMTP Policy Tools (5 tools)**
+  - `list_smtp_policies` - List all SMTP policies
+  - `get_smtp_policy` - Get SMTP policy details by MOID
+  - `create_smtp_policy` - Create SMTP policy (server, port, sender)
+  - `update_smtp_policy` - Update SMTP policy
+  - `delete_smtp_policy` - Delete SMTP policy
 
 **Improvements:**
 
