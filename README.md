@@ -75,6 +75,9 @@ npm run build
 
 ![Intersight Dashboard](images/image1.png)
 
+
+**📖 For complete container deployment guide, see [CONTAINER_DEPLOYMENT.md](CONTAINER_DEPLOYMENT.md)**
+
 ## Example Use Cases
 
 ### Monitor Infrastructure
