@@ -3408,6 +3408,26 @@ export class IntersightMCPServer {
           },
         },
       },
+
+      // Python Examples Tool
+      {
+        name: 'get_python_examples',
+        description: 'Get Cisco Intersight Python SDK programming examples from GitHub. Accesses both the intersight-python examples and intersight-python-utils repositories for comprehensive Python code samples.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            topic: {
+              type: 'string',
+              description: 'Optional topic to search for (e.g., "servers", "policies", "firmware", "workflows"). If not provided, returns list of available examples.',
+            },
+            source: {
+              type: 'string',
+              description: 'Optional source: "examples" (SDK examples), "utils" (utility scripts), or "all" (default: all sources)',
+              enum: ['examples', 'utils', 'all'],
+            },
+          },
+        },
+      },
     ];
   }
 
@@ -4436,6 +4456,10 @@ export class IntersightMCPServer {
       case 'get_powershell_examples':
         return this.getPowerShellExamples(args.topic);
 
+      // Python Examples
+      case 'get_python_examples':
+        return this.getPythonExamples(args.topic, args.source || 'all');
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -4538,6 +4562,156 @@ export class IntersightMCPServer {
     } catch (error) {
       return {
         error: 'Failed to fetch PowerShell examples',
+        details: error instanceof Error ? error.message : String(error)
+      };
+    }
+  }
+
+  private async getPythonExamples(topic?: string, source: string = 'all'): Promise<any> {
+    const examplesUrl = 'https://api.github.com/repos/CiscoUcs/intersight-python/contents/examples';
+    const utilsUrl = 'https://api.github.com/repos/CiscoDevNet/intersight-python-utils/contents';
+    
+    try {
+      const results: any = {
+        sources: [],
+        examples: [],
+        totalCount: 0
+      };
+
+      // Fetch from SDK examples repository
+      if (source === 'examples' || source === 'all') {
+        try {
+          const response = await fetch(examplesUrl, {
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'Intersight-MCP-Server'
+            }
+          });
+
+          if (response.ok) {
+            const items = await response.json();
+            const pyFiles = items.filter((item: any) => item.type === 'file' && item.name.endsWith('.py'));
+            
+            results.sources.push({
+              name: 'SDK Examples',
+              repository: 'CiscoUcs/intersight-python',
+              url: 'https://github.com/CiscoUcs/intersight-python/tree/master/examples',
+              count: pyFiles.length
+            });
+
+            if (!topic) {
+              results.examples.push(...pyFiles.map((file: any) => ({
+                source: 'SDK Examples',
+                name: file.name,
+                url: file.html_url,
+                download_url: file.download_url,
+                description: file.name.replace('.py', '').replace(/[_-]/g, ' ')
+              })));
+            } else {
+              const matching = pyFiles.filter((file: any) => 
+                file.name.toLowerCase().includes(topic.toLowerCase())
+              );
+              
+              for (const file of matching.slice(0, 3)) {
+                const contentResponse = await fetch(file.download_url);
+                const content = await contentResponse.text();
+                results.examples.push({
+                  source: 'SDK Examples',
+                  name: file.name,
+                  url: file.html_url,
+                  content: content,
+                  description: file.name.replace('.py', '').replace(/[_-]/g, ' ')
+                });
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching SDK examples:', error);
+        }
+      }
+
+      // Fetch from Python utilities repository
+      if (source === 'utils' || source === 'all') {
+        try {
+          const response = await fetch(utilsUrl, {
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'Intersight-MCP-Server'
+            }
+          });
+
+          if (response.ok) {
+            const items = await response.json();
+            const pyFiles = items.filter((item: any) => item.type === 'file' && item.name.endsWith('.py'));
+            
+            results.sources.push({
+              name: 'Python Utilities',
+              repository: 'CiscoDevNet/intersight-python-utils',
+              url: 'https://github.com/CiscoDevNet/intersight-python-utils',
+              count: pyFiles.length
+            });
+
+            if (!topic) {
+              results.examples.push(...pyFiles.map((file: any) => ({
+                source: 'Python Utilities',
+                name: file.name,
+                url: file.html_url,
+                download_url: file.download_url,
+                description: file.name.replace('.py', '').replace(/[_-]/g, ' ')
+              })));
+            } else {
+              const matching = pyFiles.filter((file: any) => 
+                file.name.toLowerCase().includes(topic.toLowerCase())
+              );
+              
+              for (const file of matching.slice(0, 3)) {
+                const contentResponse = await fetch(file.download_url);
+                const content = await contentResponse.text();
+                results.examples.push({
+                  source: 'Python Utilities',
+                  name: file.name,
+                  url: file.html_url,
+                  content: content,
+                  description: file.name.replace('.py', '').replace(/[_-]/g, ' ')
+                });
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching Python utilities:', error);
+        }
+      }
+
+      results.totalCount = results.examples.length;
+
+      if (!topic) {
+        return {
+          message: 'Available Python examples and utilities for Cisco Intersight',
+          sources: results.sources,
+          totalExamples: results.totalCount,
+          examples: results.examples,
+          usage: 'Specify a topic keyword to search for specific examples, and optionally set source to "examples", "utils", or "all"'
+        };
+      }
+
+      if (results.examples.length === 0) {
+        return {
+          message: `No Python examples found for topic: ${topic}`,
+          searchedSources: results.sources,
+          suggestion: 'Use get_python_examples without a topic to see all available examples',
+          hint: 'Try keywords like: servers, policies, firmware, workflows, blade, rack, network, storage'
+        };
+      }
+
+      return {
+        message: `Found ${results.totalCount} Python example(s) for topic: ${topic}`,
+        sources: results.sources,
+        examplesShown: results.examples.length,
+        examples: results.examples
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to fetch Python examples',
         details: error instanceof Error ? error.message : String(error)
       };
     }

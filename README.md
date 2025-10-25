@@ -99,7 +99,7 @@ Watch the Claude Desktop MCP integration in action:
 
 ![Claude Desktop MCP Demo](images/claude_desktop.gif)
 
-## Features & Tools (197 Total)
+## Features & Tools (198 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -434,7 +434,22 @@ Watch the Claude Desktop MCP integration in action:
 
 - `get_powershell_examples` - Access Cisco Intersight PowerShell module programming examples from GitHub (89 categories with 500+ examples)
 
+### 🐍 Python SDK Examples & Utilities
+
+- `get_python_examples` - Access Cisco Intersight Python SDK examples and utilities from GitHub (30+ scripts from 2 repositories)
+
 ## Version History
+
+### Version 1.0.10
+
+**Python Examples & Utilities Integration**
+- ✅ **Python SDK Examples Tool**
+  - `get_python_examples` - Retrieve Python code examples from multiple CiscoUcs/CiscoDevNet GitHub repositories
+  - Access to SDK examples (CiscoUcs/intersight-python) - 5 foundational examples
+  - Access to Python utilities (CiscoDevNet/intersight-python-utils) - 25+ utility scripts
+  - Filter by source: "examples", "utils", or "all" (default)
+  - Search by topic: servers, policies, firmware, workflows, audit, deployment, etc.
+  - Returns actual Python code for learning and reference
 
 ### Version 1.0.9
 
