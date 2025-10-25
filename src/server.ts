@@ -1369,34 +1369,7 @@ export class IntersightMCPServer {
         },
       },
 
-      // Advanced Networking - Fabric Ports
-      {
-        name: 'list_fabric_ports',
-        description: 'List all fabric interconnect physical ports',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            filter: {
-              type: 'string',
-              description: 'OData filter expression',
-            },
-          },
-        },
-      },
-      {
-        name: 'get_fabric_port',
-        description: 'Get details of a specific fabric port',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            moid: {
-              type: 'string',
-              description: 'MOID of the fabric port',
-            },
-          },
-          required: ['moid'],
-        },
-      },
+      // Advanced Networking - Fabric Uplink/Server Ports
       {
         name: 'list_fabric_uplink_ports',
         description: 'List all fabric uplink ports',
@@ -2840,122 +2813,6 @@ export class IntersightMCPServer {
         },
       },
       {
-        name: 'list_telemetry_data_sources',
-        description: 'List all available telemetry data sources to discover what metrics are being collected',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            filter: {
-              type: 'string',
-              description: 'OData filter expression (e.g., "Name eq \'ServerMetrics\'")',
-            },
-          },
-        },
-      },
-      {
-        name: 'get_telemetry_data_source',
-        description: 'Get details of a specific telemetry data source by MOID',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            moid: {
-              type: 'string',
-              description: 'MOID of the telemetry data source',
-            },
-          },
-          required: ['moid'],
-        },
-      },
-      {
-        name: 'list_telemetry_data_source_metadata',
-        description: 'List metadata about telemetry data sources including schemas, fields, and data types',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            filter: {
-              type: 'string',
-              description: 'OData filter expression',
-            },
-          },
-        },
-      },
-      {
-        name: 'get_telemetry_data_source_metadata',
-        description: 'Get metadata for a specific telemetry data source by MOID',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            moid: {
-              type: 'string',
-              description: 'MOID of the telemetry data source metadata',
-            },
-          },
-          required: ['moid'],
-        },
-      },
-      {
-        name: 'list_telemetry_time_series',
-        description: 'Query time-series telemetry data with filtering by time range, metric type, and resource. Get historical performance data (CPU, memory, network, power, temperature, fan RPM, etc.)',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            filter: {
-              type: 'string',
-              description: 'OData filter expression (e.g., "MetricName eq \'FanSpeed\' and Timestamp gt 2025-10-24T00:00:00Z")',
-            },
-            top: {
-              type: 'number',
-              description: 'Limit number of results (e.g., 100 for last 100 data points)',
-            },
-            orderby: {
-              type: 'string',
-              description: 'Order results (e.g., "Timestamp desc" for most recent first)',
-            },
-          },
-        },
-      },
-      {
-        name: 'get_telemetry_time_series',
-        description: 'Get a specific time-series telemetry data point by MOID',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            moid: {
-              type: 'string',
-              description: 'MOID of the time-series data point',
-            },
-          },
-          required: ['moid'],
-        },
-      },
-      {
-        name: 'list_telemetry_druid_data_sources',
-        description: 'List Druid data sources for advanced analytics and detailed metrics (fan RPM, network packet discards, power consumption trends, etc.)',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            filter: {
-              type: 'string',
-              description: 'OData filter expression (e.g., "DataSourceName eq \'NetworkMetrics\'")',
-            },
-          },
-        },
-      },
-      {
-        name: 'get_telemetry_druid_data_source',
-        description: 'Get details of a specific Druid data source by MOID for advanced telemetry analytics',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            moid: {
-              type: 'string',
-              description: 'MOID of the Druid data source',
-            },
-          },
-          required: ['moid'],
-        },
-      },
-      {
         name: 'list_processor_units',
         description: 'List all processor units with current utilization',
         inputSchema: {
@@ -4059,13 +3916,7 @@ export class IntersightMCPServer {
       case 'delete_fcpool_block':
         return this.apiService.delete(`/fcpool/Blocks/${args.moid}`);
 
-      // Advanced Networking - Fabric Ports
-      case 'list_fabric_ports':
-        return this.apiService.get(args.filter ? `/fabric/Ports?$filter=${args.filter}` : '/fabric/Ports');
-      
-      case 'get_fabric_port':
-        return this.apiService.get(`/fabric/Ports/${args.moid}`);
-      
+      // Advanced Networking - Fabric Uplink/Server Ports
       case 'list_fabric_uplink_ports':
         return this.apiService.get(args.filter ? `/fabric/UplinkPcRoles?$filter=${args.filter}` : '/fabric/UplinkPcRoles');
       
@@ -4477,36 +4328,6 @@ export class IntersightMCPServer {
       
       case 'get_adapter_telemetry':
         return this.apiService.getAdapterTelemetry(args.adapterMoid);
-      
-      case 'list_telemetry_data_sources':
-        return this.apiService.get(args.filter ? `/telemetry/DataSources?$filter=${args.filter}` : '/telemetry/DataSources');
-      
-      case 'get_telemetry_data_source':
-        return this.apiService.get(`/telemetry/DataSources/${args.moid}`);
-      
-      case 'list_telemetry_data_source_metadata':
-        return this.apiService.get(args.filter ? `/telemetry/DataSourceMetadata?$filter=${args.filter}` : '/telemetry/DataSourceMetadata');
-      
-      case 'get_telemetry_data_source_metadata':
-        return this.apiService.get(`/telemetry/DataSourceMetadata/${args.moid}`);
-      
-      case 'list_telemetry_time_series':
-        let timeSeriesUrl = '/telemetry/TimeSeries';
-        const params: string[] = [];
-        if (args.filter) params.push(`$filter=${args.filter}`);
-        if (args.top) params.push(`$top=${args.top}`);
-        if (args.orderby) params.push(`$orderby=${args.orderby}`);
-        if (params.length > 0) timeSeriesUrl += '?' + params.join('&');
-        return this.apiService.get(timeSeriesUrl);
-      
-      case 'get_telemetry_time_series':
-        return this.apiService.get(`/telemetry/TimeSeries/${args.moid}`);
-      
-      case 'list_telemetry_druid_data_sources':
-        return this.apiService.get(args.filter ? `/telemetry/DruidDataSources?$filter=${args.filter}` : '/telemetry/DruidDataSources');
-      
-      case 'get_telemetry_druid_data_source':
-        return this.apiService.get(`/telemetry/DruidDataSources/${args.moid}`);
       
       case 'list_processor_units':
         return this.apiService.listProcessorUnits(args.filter);

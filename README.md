@@ -99,7 +99,7 @@ Watch the Claude Desktop MCP integration in action:
 
 ![Claude Desktop MCP Demo](images/claude_desktop.gif)
 
-## Features & Tools (207 Total)
+## Features & Tools (199 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -347,16 +347,6 @@ Watch the Claude Desktop MCP integration in action:
 - `get_adapter_telemetry` - Get network adapter statistics
 - `get_top_resources` - Get top N resources by metric (CPU, memory, power, temperature)
 
-**Native Telemetry API (Time-Series & Advanced Analytics):**
-- `list_telemetry_data_sources` - List all available telemetry data sources
-- `get_telemetry_data_source` - Get details of a specific data source
-- `list_telemetry_data_source_metadata` - List telemetry metadata (schemas, fields, types)
-- `get_telemetry_data_source_metadata` - Get metadata for a specific data source
-- `list_telemetry_time_series` - Query historical time-series data (CPU, memory, network, power, temperature, fan RPM, etc.)
-- `get_telemetry_time_series` - Get a specific time-series data point
-- `list_telemetry_druid_data_sources` - List Druid data sources for advanced analytics (fan RPM, packet discards, etc.)
-- `get_telemetry_druid_data_source` - Get Druid data source details
-
 **Component Inventory:**
 - `list_processor_units` - List CPU inventory
 - `list_memory_units` - List memory modules
@@ -463,23 +453,19 @@ Watch the Claude Desktop MCP integration in action:
 
 ### Version 1.0.14
 
-**Native Telemetry API & Advanced Analytics Integration**
-- ✅ **Telemetry Data Sources**
-  - `list_telemetry_data_sources` - Discover all available telemetry data sources
-  - `get_telemetry_data_source` - Get details of specific data sources
-  - `list_telemetry_data_source_metadata` - Access telemetry schemas, fields, and data types
-  - `get_telemetry_data_source_metadata` - Get metadata for specific sources
-- ✅ **Time-Series Telemetry**
-  - `list_telemetry_time_series` - Query historical performance data with flexible filtering
-  - `get_telemetry_time_series` - Retrieve specific time-series data points
-  - **Historical queries**: Get CPU, memory, network, power, temperature data over hours/days/weeks
-  - **Flexible filtering**: Filter by time range, metric type, resource MOID
-  - **Custom ordering**: Sort by timestamp for trend analysis
-- ✅ **Druid Advanced Analytics**
-  - `list_telemetry_druid_data_sources` - Access Druid data sources for detailed metrics
-  - `get_telemetry_druid_data_source` - Get Druid source details
-  - **Detailed metrics**: Fan RPM, network packet discards, power consumption trends
-  - **Advanced analytics**: Complex queries for performance optimization
+**Equipment-Based Telemetry & Monitoring**
+- ✅ **Component Telemetry**
+  - `get_server_telemetry` - Server metrics (CPU, Memory, Temperature, Power)
+  - `get_chassis_telemetry` - Chassis telemetry (power, thermal, fans, PSUs)
+  - `get_adapter_telemetry` - Network adapter statistics
+  - `get_top_resources` - Top N resources by metric
+- ✅ **Hardware Inventory**
+  - `list_processor_units` - CPU inventory and utilization
+  - `list_memory_units` - Memory modules and usage
+  - `list_storage_controllers` - Storage controller information
+  - `list_physical_drives` - Physical disk inventory
+  - `get_power_statistics` - Power consumption metrics
+  - `get_thermal_statistics` - Temperature monitoring data
 
 ### Version 1.0.13
 
