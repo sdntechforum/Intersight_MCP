@@ -99,7 +99,7 @@ Watch the Claude Desktop MCP integration in action:
 
 ![Claude Desktop MCP Demo](images/claude_desktop.gif)
 
-## Features & Tools (196 Total)
+## Features & Tools (197 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -430,7 +430,20 @@ Watch the Claude Desktop MCP integration in action:
 - `list_management_controllers` - List all management controllers (CIMC, IMC, BMC)
 - `list_management_interfaces` - List all management network interfaces
 
+### 📚 PowerShell SDK Examples
+
+- `get_powershell_examples` - Access Cisco Intersight PowerShell module programming examples from GitHub (89 categories with 500+ examples)
+
 ## Version History
+
+### Version 1.0.9
+
+**PowerShell Examples Integration**
+- ✅ **PowerShell SDK Examples Tool**
+  - `get_powershell_examples` - Retrieve PowerShell code examples from CiscoDevNet GitHub repository
+  - Access to 89 example categories covering all Intersight operations
+  - Returns actual PowerShell code for compute, storage, network policies, and more
+  - Perfect for learning PowerShell SDK usage patterns and best practices
 
 ### Version 1.0.8
 

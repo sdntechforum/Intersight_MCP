@@ -3393,6 +3393,21 @@ export class IntersightMCPServer {
           },
         },
       },
+
+      // PowerShell Examples Tool
+      {
+        name: 'get_powershell_examples',
+        description: 'Get Cisco Intersight PowerShell module programming examples from GitHub. Returns code examples for various Intersight operations using the PowerShell SDK.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            topic: {
+              type: 'string',
+              description: 'Optional topic to search for (e.g., "server", "policy", "firmware", "workflow"). If not provided, returns list of available examples.',
+            },
+          },
+        },
+      },
     ];
   }
 
@@ -4417,8 +4432,114 @@ export class IntersightMCPServer {
       case 'list_management_interfaces':
         return this.apiService.get(args.filter ? `/management/Interfaces?$filter=${args.filter}` : '/management/Interfaces');
 
+      // PowerShell Examples
+      case 'get_powershell_examples':
+        return this.getPowerShellExamples(args.topic);
+
       default:
         throw new Error(`Unknown tool: ${name}`);
+    }
+  }
+
+  private async getPowerShellExamples(topic?: string): Promise<any> {
+    const baseUrl = 'https://api.github.com/repos/CiscoDevNet/intersight-powershell/contents/examples';
+    
+    try {
+      // Fetch the examples directory listing
+      const response = await fetch(baseUrl, {
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Intersight-MCP-Server'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`GitHub API error: ${response.statusText}`);
+      }
+
+      const directories = await response.json();
+      
+      // Get all subdirectories
+      const subdirs = directories.filter((item: any) => item.type === 'dir');
+      
+      if (!topic) {
+        // Return list of available example categories
+        return {
+          message: 'Available PowerShell example categories for Cisco Intersight',
+          count: subdirs.length,
+          categories: subdirs.map((dir: any) => ({
+            name: dir.name,
+            url: dir.html_url,
+            description: `Examples for ${dir.name} operations`
+          })),
+          usage: 'Specify a topic (category name) to see examples in that category'
+        };
+      }
+
+      // Find matching subdirectory
+      const matchingDir = subdirs.find((dir: any) => 
+        dir.name.toLowerCase() === topic.toLowerCase() ||
+        dir.name.toLowerCase().includes(topic.toLowerCase())
+      );
+
+      if (!matchingDir) {
+        return {
+          message: `No category found for topic: ${topic}`,
+          suggestion: 'Use get_powershell_examples without a topic to see all available categories',
+          availableCategories: subdirs.slice(0, 10).map((d: any) => d.name)
+        };
+      }
+
+      // Fetch files in the matching directory
+      const dirResponse = await fetch(matchingDir.url, {
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Intersight-MCP-Server'
+        }
+      });
+
+      if (!dirResponse.ok) {
+        throw new Error(`Failed to fetch directory: ${dirResponse.statusText}`);
+      }
+
+      const files = await dirResponse.json();
+      const ps1Files = files.filter((file: any) => file.name.endsWith('.ps1'));
+
+      if (ps1Files.length === 0) {
+        return {
+          message: `No PowerShell examples found in category: ${matchingDir.name}`,
+          categoryUrl: matchingDir.html_url
+        };
+      }
+
+      // Fetch content of all .ps1 files in this category
+      const examples = await Promise.all(
+        ps1Files.slice(0, 5).map(async (file: any) => {
+          const contentResponse = await fetch(file.download_url);
+          const content = await contentResponse.text();
+          
+          return {
+            name: file.name,
+            url: file.html_url,
+            content: content,
+            description: file.name.replace('.ps1', '').replace(/[_-]/g, ' ')
+          };
+        })
+      );
+
+      return {
+        message: `Found ${ps1Files.length} PowerShell example(s) in category: ${matchingDir.name}`,
+        category: matchingDir.name,
+        categoryUrl: matchingDir.html_url,
+        examplesShown: examples.length,
+        totalExamples: ps1Files.length,
+        examples: examples
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to fetch PowerShell examples',
+        details: error instanceof Error ? error.message : String(error)
+      };
     }
   }
 
