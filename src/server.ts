@@ -3432,13 +3432,18 @@ export class IntersightMCPServer {
       // Terraform Examples Tool
       {
         name: 'get_terraform_examples',
-        description: 'Get Cisco Intersight Terraform module examples from GitHub. Access Terraform configurations for servers, policies, pools, profiles, and complete infrastructure deployments.',
+        description: 'Get Cisco Intersight Terraform resources and documentation. Access provider documentation from Terraform Registry and module examples from GitHub.',
         inputSchema: {
           type: 'object',
           properties: {
-            module: {
+            resource: {
               type: 'string',
-              description: 'Optional module name to search for (e.g., "server", "policy", "pool", "profile", "network"). If not provided, returns list of available modules.',
+              description: 'Optional resource or module name to search for (e.g., "server_profile", "policy", "pool", "network"). If not provided, returns list of available options.',
+            },
+            source: {
+              type: 'string',
+              description: 'Source: "registry" (Terraform Registry docs), "modules" (GitHub modules), or "all" (default: all)',
+              enum: ['registry', 'modules', 'all'],
             },
           },
         },
@@ -4477,7 +4482,7 @@ export class IntersightMCPServer {
 
       // Terraform Examples
       case 'get_terraform_examples':
-        return this.getTerraformExamples(args.module);
+        return this.getTerraformExamples(args.resource, args.source || 'all');
 
       default:
         throw new Error(`Unknown tool: ${name}`);
@@ -4736,140 +4741,159 @@ export class IntersightMCPServer {
     }
   }
 
-  private async getTerraformExamples(module?: string): Promise<any> {
-    const baseUrl = 'https://api.github.com/repos/CiscoDevNet/intersight-terraform-modules/contents';
-    
+  private async getTerraformExamples(resource?: string, source: string = 'all'): Promise<any> {
     try {
-      // Fetch the root directory listing
-      const response = await fetch(baseUrl, {
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Intersight-MCP-Server'
-        }
-      });
+      const results: any = {
+        sources: [],
+        resources: [],
+        modules: []
+      };
 
-      if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.statusText}`);
-      }
+      // Fetch from Terraform Registry documentation
+      if (source === 'registry' || source === 'all') {
+        const registryUrl = 'https://registry.terraform.io/v2/providers/5464';
+        
+        try {
+          const response = await fetch(registryUrl, {
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'Intersight-MCP-Server'
+            }
+          });
 
-      const items = await response.json();
-      
-      // Get all directories (these are the Terraform modules)
-      const modules = items.filter((item: any) => item.type === 'dir');
-      
-      if (!module) {
-        // Return list of available modules
-        return {
-          message: 'Available Terraform modules for Cisco Intersight',
-          repository: 'CiscoDevNet/intersight-terraform-modules',
-          count: modules.length,
-          modules: modules.map((mod: any) => ({
-            name: mod.name,
-            url: mod.html_url,
-            description: `Terraform module for ${mod.name.replace(/-/g, ' ')}`
-          })),
-          usage: 'Specify a module name to see its configuration files and examples'
-        };
-      }
-
-      // Find matching module directory
-      const matchingModule = modules.find((mod: any) => 
-        mod.name.toLowerCase() === module.toLowerCase() ||
-        mod.name.toLowerCase().includes(module.toLowerCase())
-      );
-
-      if (!matchingModule) {
-        return {
-          message: `No Terraform module found for: ${module}`,
-          suggestion: 'Use get_terraform_examples without a module to see all available modules',
-          availableModules: modules.slice(0, 15).map((m: any) => m.name)
-        };
-      }
-
-      // Fetch files in the matching module directory
-      const moduleResponse = await fetch(matchingModule.url, {
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Intersight-MCP-Server'
-        }
-      });
-
-      if (!moduleResponse.ok) {
-        throw new Error(`Failed to fetch module: ${moduleResponse.statusText}`);
-      }
-
-      const moduleFiles = await moduleResponse.json();
-      
-      // Get .tf files and README
-      const tfFiles = moduleFiles.filter((file: any) => 
-        file.type === 'file' && (file.name.endsWith('.tf') || file.name === 'README.md')
-      );
-
-      // Check for examples subdirectory
-      const examplesDir = moduleFiles.find((item: any) => 
-        item.type === 'dir' && item.name === 'examples'
-      );
-
-      let exampleFiles: any[] = [];
-      if (examplesDir) {
-        const examplesResponse = await fetch(examplesDir.url, {
-          headers: {
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Intersight-MCP-Server'
-          }
-        });
-
-        if (examplesResponse.ok) {
-          const examplesContent = await examplesResponse.json();
-          exampleFiles = examplesContent.filter((file: any) => 
-            file.type === 'file' && file.name.endsWith('.tf')
-          );
-        }
-      }
-
-      // Fetch content of main .tf files (limit to 3)
-      const mainFiles = await Promise.all(
-        tfFiles.slice(0, 3).map(async (file: any) => {
-          const contentResponse = await fetch(file.download_url);
-          const content = await contentResponse.text();
-          
-          return {
-            name: file.name,
-            url: file.html_url,
-            content: content,
-            type: file.name.endsWith('.md') ? 'documentation' : 'terraform'
-          };
-        })
-      );
-
-      // Fetch example files if they exist (limit to 2)
-      let examples: any[] = [];
-      if (exampleFiles.length > 0) {
-        examples = await Promise.all(
-          exampleFiles.slice(0, 2).map(async (file: any) => {
-            const contentResponse = await fetch(file.download_url);
-            const content = await contentResponse.text();
+          if (response.ok) {
+            const data = await response.json();
             
-            return {
-              name: file.name,
-              url: file.html_url,
-              content: content,
-              type: 'example'
+            results.sources.push({
+              name: 'Terraform Registry',
+              provider: 'CiscoDevNet/intersight',
+              url: 'https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs',
+              version: data.data?.attributes?.version || 'latest'
+            });
+
+            // Registry data structure - add info about available resources
+            results.registryInfo = {
+              provider: 'intersight',
+              namespace: 'CiscoDevNet',
+              documentation: 'https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs',
+              resourcesUrl: 'https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/resources',
+              dataSourcesUrl: 'https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/data-sources',
+              guideUrl: 'https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/guides'
             };
-          })
-        );
+
+            if (resource) {
+              // Provide direct links to resource documentation
+              const resourceName = resource.toLowerCase().replace(/^intersight_/, '');
+              results.registryDocs = {
+                resourceDoc: `https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/resources/${resourceName}`,
+                dataSourceDoc: `https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/data-sources/${resourceName}`,
+                message: `Visit the URLs above for detailed Terraform documentation on ${resource}`
+              };
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching Terraform Registry:', error);
+        }
+      }
+
+      // Fetch from GitHub modules
+      if (source === 'modules' || source === 'all') {
+        const baseUrl = 'https://api.github.com/repos/CiscoDevNet/intersight-terraform-modules/contents';
+        
+        try {
+          const response = await fetch(baseUrl, {
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'Intersight-MCP-Server'
+            }
+          });
+
+          if (response.ok) {
+            const items = await response.json();
+            const modules = items.filter((item: any) => item.type === 'dir');
+            
+            results.sources.push({
+              name: 'GitHub Terraform Modules',
+              repository: 'CiscoDevNet/intersight-terraform-modules',
+              url: 'https://github.com/CiscoDevNet/intersight-terraform-modules',
+              moduleCount: modules.length
+            });
+
+            if (!resource) {
+              results.modules = modules.map((mod: any) => ({
+                name: mod.name,
+                url: mod.html_url,
+                description: `Terraform module for ${mod.name.replace(/-/g, ' ')}`
+              }));
+            } else {
+              // Find matching module
+              const matchingModule = modules.find((mod: any) => 
+                mod.name.toLowerCase() === resource.toLowerCase() ||
+                mod.name.toLowerCase().includes(resource.toLowerCase())
+              );
+
+              if (matchingModule) {
+                const moduleResponse = await fetch(matchingModule.url, {
+                  headers: {
+                    'Accept': 'application/vnd.github.v3+json',
+                    'User-Agent': 'Intersight-MCP-Server'
+                  }
+                });
+
+                if (moduleResponse.ok) {
+                  const moduleFiles = await moduleResponse.json();
+                  const tfFiles = moduleFiles.filter((file: any) => 
+                    file.type === 'file' && (file.name.endsWith('.tf') || file.name === 'README.md')
+                  );
+
+                  // Fetch content of main .tf files (limit to 3)
+                  const mainFiles = await Promise.all(
+                    tfFiles.slice(0, 3).map(async (file: any) => {
+                      const contentResponse = await fetch(file.download_url);
+                      const content = await contentResponse.text();
+                      
+                      return {
+                        name: file.name,
+                        url: file.html_url,
+                        content: content,
+                        type: file.name.endsWith('.md') ? 'documentation' : 'terraform'
+                      };
+                    })
+                  );
+
+                  results.moduleDetails = {
+                    name: matchingModule.name,
+                    url: matchingModule.html_url,
+                    files: mainFiles
+                  };
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching GitHub modules:', error);
+        }
+      }
+
+      // Build response
+      if (!resource) {
+        return {
+          message: 'Cisco Intersight Terraform Resources and Modules',
+          sources: results.sources,
+          registryInfo: results.registryInfo,
+          githubModules: results.modules,
+          usage: 'Specify a resource name to get detailed documentation and examples. Use source parameter to filter: "registry", "modules", or "all"'
+        };
       }
 
       return {
-        message: `Terraform module: ${matchingModule.name}`,
-        moduleName: matchingModule.name,
-        moduleUrl: matchingModule.html_url,
-        mainFiles: mainFiles,
-        examples: examples,
-        totalTfFiles: tfFiles.length,
-        totalExamples: exampleFiles.length,
-        hasExamples: exampleFiles.length > 0
+        message: `Terraform resources and modules for: ${resource}`,
+        sources: results.sources,
+        registryDocumentation: results.registryDocs,
+        moduleDetails: results.moduleDetails,
+        recommendation: 'Check both Registry documentation (for resource syntax) and GitHub modules (for complete examples)'
       };
+
     } catch (error) {
       return {
         error: 'Failed to fetch Terraform examples',

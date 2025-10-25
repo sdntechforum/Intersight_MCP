@@ -99,7 +99,7 @@ Watch the Claude Desktop MCP integration in action:
 
 ![Claude Desktop MCP Demo](images/claude_desktop.gif)
 
-## Features & Tools (199 Total)
+## Features & Tools (198 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -438,11 +438,22 @@ Watch the Claude Desktop MCP integration in action:
 
 - `get_python_examples` - Access Cisco Intersight Python SDK examples and utilities from GitHub (30+ scripts from 2 repositories)
 
-### 🏗️ Terraform Infrastructure Modules
+### 🏗️ Terraform Infrastructure Modules & Registry
 
-- `get_terraform_examples` - Access Cisco Intersight Terraform modules and configurations from GitHub (4 comprehensive IaC modules)
+- `get_terraform_examples` - Access Terraform Registry documentation AND GitHub modules (dual-source Terraform support)
 
 ## Version History
+
+### Version 1.0.12
+
+**Enhanced Terraform Support with Registry Integration**
+- ✅ **Terraform Tool Enhancement**
+  - `get_terraform_examples` - Now accesses BOTH Terraform Registry and GitHub modules
+  - **Terraform Registry Integration**: Direct links to official provider documentation at registry.terraform.io
+  - **Resource Documentation**: Get resource and data source documentation URLs for any Intersight Terraform resource
+  - **GitHub Modules**: Access to 4 comprehensive IaC modules with actual .tf configuration files
+  - **Dual-source filtering**: Choose "registry" (docs), "modules" (code), or "all" (both)
+  - **Complete Terraform coverage**: Documentation for syntax + working code examples
 
 ### Version 1.0.11
 
