@@ -3428,6 +3428,21 @@ export class IntersightMCPServer {
           },
         },
       },
+
+      // Terraform Examples Tool
+      {
+        name: 'get_terraform_examples',
+        description: 'Get Cisco Intersight Terraform module examples from GitHub. Access Terraform configurations for servers, policies, pools, profiles, and complete infrastructure deployments.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            module: {
+              type: 'string',
+              description: 'Optional module name to search for (e.g., "server", "policy", "pool", "profile", "network"). If not provided, returns list of available modules.',
+            },
+          },
+        },
+      },
     ];
   }
 
@@ -4460,6 +4475,10 @@ export class IntersightMCPServer {
       case 'get_python_examples':
         return this.getPythonExamples(args.topic, args.source || 'all');
 
+      // Terraform Examples
+      case 'get_terraform_examples':
+        return this.getTerraformExamples(args.module);
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -4712,6 +4731,148 @@ export class IntersightMCPServer {
     } catch (error) {
       return {
         error: 'Failed to fetch Python examples',
+        details: error instanceof Error ? error.message : String(error)
+      };
+    }
+  }
+
+  private async getTerraformExamples(module?: string): Promise<any> {
+    const baseUrl = 'https://api.github.com/repos/CiscoDevNet/intersight-terraform-modules/contents';
+    
+    try {
+      // Fetch the root directory listing
+      const response = await fetch(baseUrl, {
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Intersight-MCP-Server'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`GitHub API error: ${response.statusText}`);
+      }
+
+      const items = await response.json();
+      
+      // Get all directories (these are the Terraform modules)
+      const modules = items.filter((item: any) => item.type === 'dir');
+      
+      if (!module) {
+        // Return list of available modules
+        return {
+          message: 'Available Terraform modules for Cisco Intersight',
+          repository: 'CiscoDevNet/intersight-terraform-modules',
+          count: modules.length,
+          modules: modules.map((mod: any) => ({
+            name: mod.name,
+            url: mod.html_url,
+            description: `Terraform module for ${mod.name.replace(/-/g, ' ')}`
+          })),
+          usage: 'Specify a module name to see its configuration files and examples'
+        };
+      }
+
+      // Find matching module directory
+      const matchingModule = modules.find((mod: any) => 
+        mod.name.toLowerCase() === module.toLowerCase() ||
+        mod.name.toLowerCase().includes(module.toLowerCase())
+      );
+
+      if (!matchingModule) {
+        return {
+          message: `No Terraform module found for: ${module}`,
+          suggestion: 'Use get_terraform_examples without a module to see all available modules',
+          availableModules: modules.slice(0, 15).map((m: any) => m.name)
+        };
+      }
+
+      // Fetch files in the matching module directory
+      const moduleResponse = await fetch(matchingModule.url, {
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Intersight-MCP-Server'
+        }
+      });
+
+      if (!moduleResponse.ok) {
+        throw new Error(`Failed to fetch module: ${moduleResponse.statusText}`);
+      }
+
+      const moduleFiles = await moduleResponse.json();
+      
+      // Get .tf files and README
+      const tfFiles = moduleFiles.filter((file: any) => 
+        file.type === 'file' && (file.name.endsWith('.tf') || file.name === 'README.md')
+      );
+
+      // Check for examples subdirectory
+      const examplesDir = moduleFiles.find((item: any) => 
+        item.type === 'dir' && item.name === 'examples'
+      );
+
+      let exampleFiles: any[] = [];
+      if (examplesDir) {
+        const examplesResponse = await fetch(examplesDir.url, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'Intersight-MCP-Server'
+          }
+        });
+
+        if (examplesResponse.ok) {
+          const examplesContent = await examplesResponse.json();
+          exampleFiles = examplesContent.filter((file: any) => 
+            file.type === 'file' && file.name.endsWith('.tf')
+          );
+        }
+      }
+
+      // Fetch content of main .tf files (limit to 3)
+      const mainFiles = await Promise.all(
+        tfFiles.slice(0, 3).map(async (file: any) => {
+          const contentResponse = await fetch(file.download_url);
+          const content = await contentResponse.text();
+          
+          return {
+            name: file.name,
+            url: file.html_url,
+            content: content,
+            type: file.name.endsWith('.md') ? 'documentation' : 'terraform'
+          };
+        })
+      );
+
+      // Fetch example files if they exist (limit to 2)
+      let examples: any[] = [];
+      if (exampleFiles.length > 0) {
+        examples = await Promise.all(
+          exampleFiles.slice(0, 2).map(async (file: any) => {
+            const contentResponse = await fetch(file.download_url);
+            const content = await contentResponse.text();
+            
+            return {
+              name: file.name,
+              url: file.html_url,
+              content: content,
+              type: 'example'
+            };
+          })
+        );
+      }
+
+      return {
+        message: `Terraform module: ${matchingModule.name}`,
+        moduleName: matchingModule.name,
+        moduleUrl: matchingModule.html_url,
+        mainFiles: mainFiles,
+        examples: examples,
+        totalTfFiles: tfFiles.length,
+        totalExamples: exampleFiles.length,
+        hasExamples: exampleFiles.length > 0
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to fetch Terraform examples',
         details: error instanceof Error ? error.message : String(error)
       };
     }

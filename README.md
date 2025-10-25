@@ -99,7 +99,7 @@ Watch the Claude Desktop MCP integration in action:
 
 ![Claude Desktop MCP Demo](images/claude_desktop.gif)
 
-## Features & Tools (198 Total)
+## Features & Tools (199 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -438,7 +438,21 @@ Watch the Claude Desktop MCP integration in action:
 
 - `get_python_examples` - Access Cisco Intersight Python SDK examples and utilities from GitHub (30+ scripts from 2 repositories)
 
+### 🏗️ Terraform Infrastructure Modules
+
+- `get_terraform_examples` - Access Cisco Intersight Terraform modules and configurations from GitHub (4 comprehensive IaC modules)
+
 ## Version History
+
+### Version 1.0.11
+
+**Terraform Infrastructure Modules Integration**
+- ✅ **Terraform Modules Tool**
+  - `get_terraform_examples` - Retrieve Terraform Infrastructure as Code modules from CiscoDevNet GitHub repository
+  - Access to 4 comprehensive modules: intersight-imm (IMM policies), intersight-domain-profiles, intersight-moids, intersight-sds
+  - Returns Terraform configuration files (.tf) including compute, network, management, and storage policies
+  - Includes example variable files (example.auto.tfvars) for quick setup
+  - Perfect for infrastructure automation and policy-as-code deployments
 
 ### Version 1.0.10
 
