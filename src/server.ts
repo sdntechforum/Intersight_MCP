@@ -3448,6 +3448,26 @@ export class IntersightMCPServer {
           },
         },
       },
+
+      // Ansible Examples Tool
+      {
+        name: 'get_ansible_examples',
+        description: 'Get Cisco Intersight Ansible modules, playbooks, and CVD solutions. Access automation code from Ansible collection and validated design documentation.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            resource: {
+              type: 'string',
+              description: 'Optional resource name to search for (e.g., "server", "profile", "policy", "network"). If not provided, returns list of available options.',
+            },
+            source: {
+              type: 'string',
+              description: 'Source: "modules" (Ansible modules), "playbooks" (example playbooks), "cvd" (CVD solutions), or "all" (default: all)',
+              enum: ['modules', 'playbooks', 'cvd', 'all'],
+            },
+          },
+        },
+      },
     ];
   }
 
@@ -4484,6 +4504,10 @@ export class IntersightMCPServer {
       case 'get_terraform_examples':
         return this.getTerraformExamples(args.resource, args.source || 'all');
 
+      // Ansible Examples
+      case 'get_ansible_examples':
+        return this.getAnsibleExamples(args.resource, args.source || 'all');
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -4897,6 +4921,201 @@ export class IntersightMCPServer {
     } catch (error) {
       return {
         error: 'Failed to fetch Terraform examples',
+        details: error instanceof Error ? error.message : String(error)
+      };
+    }
+  }
+
+  private async getAnsibleExamples(resource?: string, source: string = 'all'): Promise<any> {
+    try {
+      const results: any = {
+        sources: [],
+        modules: [],
+        playbooks: [],
+        cvd: []
+      };
+
+      // Fetch Ansible modules
+      if (source === 'modules' || source === 'all') {
+        const modulesUrl = 'https://api.github.com/repos/CiscoDevNet/intersight-ansible/contents/plugins/modules';
+        
+        try {
+          const response = await fetch(modulesUrl, {
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'Intersight-MCP-Server'
+            }
+          });
+
+          if (response.ok) {
+            const items = await response.json();
+            const moduleFiles = items.filter((item: any) => 
+              item.type === 'file' && item.name.endsWith('.py') && !item.name.startsWith('__')
+            );
+            
+            results.sources.push({
+              name: 'Ansible Modules',
+              repository: 'CiscoDevNet/intersight-ansible',
+              url: 'https://github.com/CiscoDevNet/intersight-ansible/tree/main/plugins/modules',
+              count: moduleFiles.length
+            });
+
+            if (!resource) {
+              results.modules = moduleFiles.map((file: any) => ({
+                name: file.name.replace('.py', ''),
+                url: file.html_url,
+                description: `Ansible module for ${file.name.replace('.py', '').replace(/_/g, ' ')}`
+              }));
+            } else {
+              const matching = moduleFiles.filter((file: any) => 
+                file.name.toLowerCase().includes(resource.toLowerCase())
+              );
+
+              for (const file of matching.slice(0, 3)) {
+                const contentResponse = await fetch(file.download_url);
+                const content = await contentResponse.text();
+                results.modules.push({
+                  name: file.name.replace('.py', ''),
+                  url: file.html_url,
+                  content: content,
+                  type: 'module'
+                });
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching Ansible modules:', error);
+        }
+      }
+
+      // Fetch Ansible playbooks
+      if (source === 'playbooks' || source === 'all') {
+        const playbooksUrl = 'https://api.github.com/repos/CiscoDevNet/intersight-ansible/contents/playbooks';
+        
+        try {
+          const response = await fetch(playbooksUrl, {
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'Intersight-MCP-Server'
+            }
+          });
+
+          if (response.ok) {
+            const items = await response.json();
+            const playbookFiles = items.filter((item: any) => 
+              item.type === 'file' && (item.name.endsWith('.yml') || item.name.endsWith('.yaml'))
+            );
+            
+            results.sources.push({
+              name: 'Ansible Playbooks',
+              repository: 'CiscoDevNet/intersight-ansible',
+              url: 'https://github.com/CiscoDevNet/intersight-ansible/tree/main/playbooks',
+              count: playbookFiles.length
+            });
+
+            if (!resource) {
+              results.playbooks = playbookFiles.map((file: any) => ({
+                name: file.name,
+                url: file.html_url,
+                description: `Example playbook: ${file.name.replace(/\.(yml|yaml)$/, '').replace(/[-_]/g, ' ')}`
+              }));
+            } else {
+              const matching = playbookFiles.filter((file: any) => 
+                file.name.toLowerCase().includes(resource.toLowerCase())
+              );
+
+              for (const file of matching.slice(0, 3)) {
+                const contentResponse = await fetch(file.download_url);
+                const content = await contentResponse.text();
+                results.playbooks.push({
+                  name: file.name,
+                  url: file.html_url,
+                  content: content,
+                  type: 'playbook'
+                });
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching Ansible playbooks:', error);
+        }
+      }
+
+      // Fetch CVD FlashStack documentation
+      if (source === 'cvd' || source === 'all') {
+        const cvdUrl = 'https://api.github.com/repos/ucs-compute-solutions/CVD-FlashStack-IMM-VCF/contents';
+        
+        try {
+          const response = await fetch(cvdUrl, {
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'Intersight-MCP-Server'
+            }
+          });
+
+          if (response.ok) {
+            const items = await response.json();
+            
+            results.sources.push({
+              name: 'CVD FlashStack IMM Solutions',
+              repository: 'ucs-compute-solutions/CVD-FlashStack-IMM-VCF',
+              url: 'https://github.com/ucs-compute-solutions/CVD-FlashStack-IMM-VCF',
+              description: 'Cisco Validated Design for FlashStack with Intersight Managed Mode'
+            });
+
+            // Get README and key files
+            const readmeFile = items.find((item: any) => 
+              item.type === 'file' && item.name.toLowerCase() === 'readme.md'
+            );
+
+            if (readmeFile && !resource) {
+              const contentResponse = await fetch(readmeFile.download_url);
+              const content = await contentResponse.text();
+              results.cvd.push({
+                name: 'README.md',
+                url: readmeFile.html_url,
+                content: content.substring(0, 1000) + '...',
+                type: 'documentation'
+              });
+            }
+
+            // List directories (likely contain different components)
+            const dirs = items.filter((item: any) => item.type === 'dir');
+            results.cvdStructure = dirs.map((dir: any) => ({
+              name: dir.name,
+              url: dir.html_url
+            }));
+          }
+        } catch (error) {
+          console.error('Error fetching CVD FlashStack:', error);
+        }
+      }
+
+      // Build response
+      if (!resource) {
+        return {
+          message: 'Cisco Intersight Ansible Automation Resources',
+          sources: results.sources,
+          ansibleModules: results.modules.length > 0 ? results.modules.slice(0, 20) : undefined,
+          ansiblePlaybooks: results.playbooks.length > 0 ? results.playbooks.slice(0, 20) : undefined,
+          cvdSolution: results.cvd.length > 0 ? results.cvd : undefined,
+          cvdStructure: results.cvdStructure,
+          usage: 'Specify a resource name to get detailed code examples. Use source parameter to filter: "modules", "playbooks", "cvd", or "all"'
+        };
+      }
+
+      return {
+        message: `Ansible automation resources for: ${resource}`,
+        sources: results.sources,
+        modules: results.modules.length > 0 ? results.modules : undefined,
+        playbooks: results.playbooks.length > 0 ? results.playbooks : undefined,
+        cvdInfo: results.cvd.length > 0 ? results.cvd : undefined,
+        recommendation: 'Check modules for automation tasks, playbooks for complete workflows, and CVD for validated solution architectures'
+      };
+
+    } catch (error) {
+      return {
+        error: 'Failed to fetch Ansible examples',
         details: error instanceof Error ? error.message : String(error)
       };
     }

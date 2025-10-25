@@ -99,7 +99,7 @@ Watch the Claude Desktop MCP integration in action:
 
 ![Claude Desktop MCP Demo](images/claude_desktop.gif)
 
-## Features & Tools (198 Total)
+## Features & Tools (199 Total)
 
 ### 📦 Inventory & Discovery
 - `list_compute_servers` - List all compute servers with optional filtering
@@ -442,7 +442,22 @@ Watch the Claude Desktop MCP integration in action:
 
 - `get_terraform_examples` - Access Terraform Registry documentation AND GitHub modules (dual-source Terraform support)
 
+### 🤖 Ansible Automation & CVD Solutions
+
+- `get_ansible_examples` - Access Ansible modules, playbooks, and CVD FlashStack solutions (triple-source automation resources)
+
 ## Version History
+
+### Version 1.0.13
+
+**Ansible Automation & CVD Solutions Integration**
+- ✅ **Ansible Examples Tool**
+  - `get_ansible_examples` - Triple-source Ansible automation resources
+  - **Ansible Modules**: Access to 100+ automation modules from plugins/modules (Python code)
+  - **Example Playbooks**: Working YAML playbooks from the playbooks directory
+  - **CVD FlashStack IMM**: Validated design documentation from ucs-compute-solutions
+  - **Source filtering**: Choose "modules", "playbooks", "cvd", or "all" (default)
+  - **Complete automation coverage**: Code, workflows, and validated designs
 
 ### Version 1.0.12
 
