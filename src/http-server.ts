@@ -1,8 +1,31 @@
+/*
+ * MIT License
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
 import { IntersightApiService } from './services/intersightApi.js';
-import { loadConfig } from './utils/config.js';
+import { loadConfig, loadMCPServerConfig, isToolEnabled, getEnabledTools, MCPServerConfig } from './utils/config.js';
+import { IntersightMCPServer } from './server.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,160 +34,41 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// Initialize API Service
+// Initialize API Service and MCP Configuration
 let apiService: IntersightApiService;
+let mcpConfig: MCPServerConfig;
+let mcpServer: IntersightMCPServer;
+let allTools: Tool[];
+let enabledTools: Tool[];
 
 try {
   const config = loadConfig();
+  mcpConfig = loadMCPServerConfig();
   apiService = new IntersightApiService(config);
+  mcpServer = new IntersightMCPServer();
+  
+  // Get tools from the MCP server instance
+  allTools = (mcpServer as any).getAllTools();
+  enabledTools = getEnabledTools(allTools, mcpConfig);
+  
   console.log('✅ Intersight API Service initialized successfully');
+  console.log(`🔧 Configuration: ${mcpConfig.serverConfig.toolSelectionMode} mode`);
+  console.log(`🛠️  Tools: ${enabledTools.length} of ${allTools.length} enabled`);
 } catch (error) {
   console.error('❌ Failed to initialize API Service:', error);
   process.exit(1);
 }
 
-// Define available tools (matching the MCP server implementation)
-const tools: Tool[] = [
-  // Inventory & Discovery Tools
-  {
-    name: 'list_compute_servers',
-    description: 'List all compute servers (blades and rack units) with optional filtering',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        filter: {
-          type: 'string',
-          description: 'OData filter expression (e.g., "OperPowerState eq \'on\'")',
-        },
-      },
-    },
-  },
-  {
-    name: 'get_server_details',
-    description: 'Get detailed information about a specific server by MOID',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        moid: {
-          type: 'string',
-          description: 'Managed Object ID of the server',
-        },
-      },
-      required: ['moid'],
-    },
-  },
-  {
-    name: 'list_chassis',
-    description: 'List all equipment chassis',
-    inputSchema: {
-      type: 'object',
-      properties: {},
-    },
-  },
-  {
-    name: 'list_fabric_interconnects',
-    description: 'List all fabric interconnects and network elements',
-    inputSchema: {
-      type: 'object',
-      properties: {},
-    },
-  },
-  // Alarms & Monitoring Tools
-  {
-    name: 'list_alarms',
-    description: 'List active alarms with optional filtering by severity',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        filter: {
-          type: 'string',
-          description: 'OData filter expression (e.g., "Severity eq \'Critical\'")',
-        },
-      },
-    },
-  },
-  {
-    name: 'acknowledge_alarm',
-    description: 'Acknowledge a specific alarm',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        moid: {
-          type: 'string',
-          description: 'MOID of the alarm to acknowledge',
-        },
-      },
-      required: ['moid'],
-    },
-  },
-  // Add representative sample of the 199 tools - in production this would be the complete list
-  {
-    name: 'list_policies',
-    description: 'List policies of a specific type',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        policyType: {
-          type: 'string',
-          description: 'Policy type (e.g., "boot/PrecisionPolicies", "bios/Policies")',
-        },
-      },
-      required: ['policyType'],
-    },
-  },
-  {
-    name: 'get_policy',
-    description: 'Get details of a specific policy',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        policyType: {
-          type: 'string',
-          description: 'Policy type path',
-        },
-        moid: {
-          type: 'string',
-          description: 'MOID of the policy',
-        },
-      },
-      required: ['policyType', 'moid'],
-    },
-  },
-];
-
-// Tool execution function (mimics the MCP server's handleToolCall)
+// Tool execution function (uses the MCP server's handleToolCall)
 async function executeTool(name: string, args: Record<string, any>): Promise<any> {
-  switch (name) {
-    // Inventory & Discovery
-    case 'list_compute_servers':
-      return apiService.listComputeServers(args.filter);
-    
-    case 'get_server_details':
-      return apiService.getServerDetails(args.moid);
-    
-    case 'list_chassis':
-      return apiService.listChassis();
-    
-    case 'list_fabric_interconnects':
-      return apiService.listFabricInterconnects();
-
-    // Alarms & Monitoring
-    case 'list_alarms':
-      return apiService.listAlarms(args.filter);
-    
-    case 'acknowledge_alarm':
-      return apiService.acknowledgeAlarm(args.moid);
-
-    // Policy Management
-    case 'list_policies':
-      return apiService.listPolicies(args.policyType);
-    
-    case 'get_policy':
-      return apiService.getPolicy(args.policyType, args.moid);
-
-    default:
-      throw new Error(`Unknown tool: ${name}`);
+  // Security check: verify tool is enabled
+  const allToolNames = allTools.map(t => t.name);
+  if (!isToolEnabled(name, mcpConfig, allToolNames)) {
+    throw new Error(`Tool '${name}' is not enabled in current configuration. Use INTERSIGHT_TOOL_MODE=all to enable all tools.`);
   }
+
+  // Use the MCP server's tool execution logic
+  return (mcpServer as any).handleToolCall(name, args);
 }
 
 // Health check endpoint
@@ -172,9 +76,14 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    version: '1.0.14',
-    tools: tools.length,
-    description: 'Intersight MCP HTTP Server - Sample Implementation'
+    version: '1.0.15',
+    configuration: {
+      toolMode: mcpConfig.serverConfig.toolSelectionMode,
+      enabledTools: enabledTools.length,
+      totalTools: allTools.length,
+      enableAllTools: mcpConfig.serverConfig.enableAllTools
+    },
+    description: 'Intersight MCP HTTP Server - v1.0.15 with Tool Configuration'
   });
 });
 
@@ -182,18 +91,43 @@ app.get('/health', (req: Request, res: Response) => {
 app.get('/api/info', (req: Request, res: Response) => {
   res.json({
     name: 'Intersight MCP Server',
-    version: '1.0.14',
-    description: 'HTTP API for Cisco Intersight MCP tools',
-    totalTools: tools.length,
-    note: 'This is a sample implementation with core tools. Full MCP server has 199 tools.',
+    version: '1.0.15',
+    description: 'HTTP API for Cisco Intersight MCP tools with configurable tool modes',
+    configuration: {
+      toolMode: mcpConfig.serverConfig.toolSelectionMode,
+      enabledTools: enabledTools.length,
+      totalTools: allTools.length,
+      toolModeEnv: process.env.INTERSIGHT_TOOL_MODE || 'core (default)'
+    },
     endpoints: {
       health: '/health',
       tools: '/api/tools',
       execute: '/api/execute',
       search: '/api/tools/search',
-      batch: '/api/batch'
+      batch: '/api/batch',
+      config: '/api/config'
     },
     documentation: 'https://github.com/jim-coyne/Intersight_MCP'
+  });
+});
+
+// Configuration endpoint
+app.get('/api/config', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    configuration: {
+      serverName: mcpConfig.serverConfig.name,
+      toolSelectionMode: mcpConfig.serverConfig.toolSelectionMode,
+      enableAllTools: mcpConfig.serverConfig.enableAllTools,
+      serverProfileFocus: mcpConfig.serverConfig.serverProfileFocus,
+      enabledToolsCount: enabledTools.length,
+      totalToolsCount: allTools.length,
+      environmentVariable: process.env.INTERSIGHT_TOOL_MODE || 'not set (using default: core)'
+    },
+    instructions: {
+      coreMode: 'Set INTERSIGHT_TOOL_MODE=core for 65 safe, read-only tools',
+      allMode: 'Set INTERSIGHT_TOOL_MODE=all for 199+ tools with full CRUD capabilities'
+    }
   });
 });
 
@@ -202,8 +136,12 @@ app.get('/api/tools', async (req: Request, res: Response) => {
   try {
     res.json({
       success: true,
-      totalTools: tools.length,
-      tools: tools.map((tool: Tool) => ({
+      configuration: {
+        toolMode: mcpConfig.serverConfig.toolSelectionMode,
+        enabledTools: enabledTools.length,
+        totalTools: allTools.length
+      },
+      tools: enabledTools.map((tool: Tool) => ({
         name: tool.name,
         description: tool.description,
         parameters: tool.inputSchema?.properties || {}
@@ -231,13 +169,15 @@ app.post('/api/execute', async (req: Request, res: Response) => {
       });
     }
 
-    // Check if tool exists
-    const toolExists = tools.some(t => t.name === tool);
+    // Check if tool exists in enabled tools
+    const toolExists = enabledTools.some((t: Tool) => t.name === tool);
     if (!toolExists) {
       return res.status(400).json({
         success: false,
-        error: `Unknown tool: ${tool}`,
-        availableTools: tools.map(t => t.name)
+        error: `Tool not available: ${tool}`,
+        message: `Tool '${tool}' is not enabled in current configuration (${mcpConfig.serverConfig.toolSelectionMode} mode)`,
+        availableTools: enabledTools.map((t: Tool) => t.name),
+        hint: 'Use INTERSIGHT_TOOL_MODE=all to enable all tools'
       });
     }
 
@@ -325,7 +265,7 @@ app.get('/api/tools/search', (req: Request, res: Response) => {
 
     const searchTerm = (query as string).toLowerCase();
     
-    const matchingTools = tools.filter((tool: Tool) => 
+    const matchingTools = enabledTools.filter((tool: Tool) => 
       tool.name.toLowerCase().includes(searchTerm) ||
       (tool.description && tool.description.toLowerCase().includes(searchTerm))
     );
@@ -354,13 +294,13 @@ app.get('/api/tools/search', (req: Request, res: Response) => {
 app.get('/api/tools/:toolName', (req: Request, res: Response) => {
   try {
     const { toolName } = req.params;
-    const tool = tools.find(t => t.name === toolName);
+    const tool = enabledTools.find((t: Tool) => t.name === toolName);
     
     if (!tool) {
       return res.status(404).json({
         success: false,
         error: `Tool not found: ${toolName}`,
-        availableTools: tools.map(t => t.name)
+        availableTools: enabledTools.map((t: Tool) => t.name)
       });
     }
 
@@ -412,12 +352,18 @@ app.use((req: Request, res: Response) => {
 
 // Start server
 app.listen(port, () => {
-  console.log(`🚀 Intersight MCP HTTP Server running on port ${port}`);
-  console.log(`📊 Health check: http://localhost:${port}/health`);
+  console.log(`🚀 Intersight MCP HTTP Server v1.0.15 running on port ${port}`);
+  console.log(`🔧 Configuration Mode: ${mcpConfig.serverConfig.toolSelectionMode.toUpperCase()}`);
+  console.log(`⚡ Enabled Tools: ${enabledTools.length} tools available`);
+  console.log('');
+  console.log(`� Health check: http://localhost:${port}/health`);
   console.log(`🔧 API info: http://localhost:${port}/api/info`);
   console.log(`🛠️  Tools list: http://localhost:${port}/api/tools`);
-  console.log(`⚡ Ready to execute ${tools.length} Intersight tools via HTTP API`);
-  console.log(`📝 Note: This is a sample implementation. Full MCP server has 199 tools.`);
+  console.log(`🔍 Search tools: http://localhost:${port}/api/tools/search?query=server`);
+  console.log(`⚙️  Execute tool: POST http://localhost:${port}/api/execute`);
+  console.log('');
+  console.log(`💡 To enable all tools, set: INTERSIGHT_TOOL_MODE=all`);
+  console.log(`💡 To use core tools only, set: INTERSIGHT_TOOL_MODE=core`);
 });
 
 // Graceful shutdown

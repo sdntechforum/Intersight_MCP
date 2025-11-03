@@ -4,7 +4,12 @@ This guide explains how to deploy the Intersight MCP Server as a containerized H
 
 ## Overview
 
-The HTTP server version provides the same 199 Intersight tools as the stdio MCP server, but accessible via REST API endpoints. This enables:
+The HTTP server version provides configurable access to Intersight tools via REST API endpoints. With the new tool configuration system, you can choose between:
+
+- **Core Mode**: 65 essential read-only tools for safe monitoring and reporting
+- **All Mode**: 199+ comprehensive tools including CRUD operations
+
+This enables:
 
 - Web-based integrations
 - CI/CD pipeline access
@@ -106,7 +111,54 @@ curl -X POST http://localhost:3000/api/batch \
 | `INTERSIGHT_API_KEY_ID` | Yes | - | Your Intersight API Key ID |
 | `INTERSIGHT_PRIVATE_KEY_PATH` | Yes | `/app/secrets/private_key.pem` | Path to private key in container |
 | `INTERSIGHT_BASE_URL` | No | `https://intersight.com` | Intersight API base URL |
+| `INTERSIGHT_TOOL_MODE` | No | `core` | Tool selection mode: `core` (65 tools) or `all` (199+ tools) |
 | `PORT` | No | `3000` | HTTP server port |
+
+### Tool Configuration Modes
+
+The HTTP server now supports two tool modes for different security and use case requirements:
+
+#### Core Mode (Default)
+- **65 essential tools** for monitoring and reporting
+- **Read-only operations** - no create, update, or delete capabilities
+- **Safe for production** monitoring environments
+- **Recommended for** dashboard integrations, monitoring systems
+
+```bash
+# Start in core mode (default)
+docker-compose up -d
+
+# Explicitly set core mode
+INTERSIGHT_TOOL_MODE=core docker-compose up -d
+```
+
+#### All Mode
+- **199+ comprehensive tools** including full CRUD operations
+- **Complete functionality** matching the stdio MCP server
+- **Administrative access** to modify Intersight configurations
+- **Use with caution** in production environments
+
+```bash
+# Start in all mode
+INTERSIGHT_TOOL_MODE=all docker-compose up -d
+```
+
+#### Mode Comparison
+
+| Feature | Core Mode | All Mode |
+|---------|-----------|----------|
+| Tool Count | 65 | 199+ |
+| Read Operations | ✅ | ✅ |
+| Create Operations | ❌ | ✅ |
+| Update Operations | ❌ | ✅ |
+| Delete Operations | ❌ | ✅ |
+| Production Safe | ✅ | ⚠️ |
+| Full Admin Access | ❌ | ✅ |
+
+You can check the current mode via the API:
+```bash
+curl http://localhost:3000/api/info
+```
 
 ### Docker Compose Profiles
 
@@ -185,7 +237,7 @@ spec:
     spec:
       containers:
       - name: intersight-mcp-http
-        image: intersight-mcp-http:1.0.14
+        image: intersight-mcp-http:1.0.15
         ports:
         - containerPort: 3000
         env:
@@ -194,6 +246,8 @@ spec:
             secretKeyRef:
               name: intersight-credentials
               key: api-key-id
+        - name: INTERSIGHT_TOOL_MODE
+          value: "core"  # Change to "all" for full tool access
         volumeMounts:
         - name: private-key
           mountPath: /app/secrets
@@ -295,6 +349,40 @@ The HTTP server can be extended by:
 2. Implementing additional tools in `src/server.ts`
 3. Adding middleware for authentication, rate limiting, etc.
 4. Customizing Docker image for specific deployment needs
+
+## Recent Updates (v1.0.15)
+
+### HTTP Server Tool Configuration
+
+The HTTP server has been updated to match the stdio MCP server capabilities with the new tool configuration system:
+
+**Key Improvements:**
+- **Configurable tool modes**: Choose between core (65 tools) and all (199+ tools) modes
+- **Enhanced security**: Core mode provides read-only access for safer production deployments
+- **Dynamic tool loading**: Tools are loaded based on `INTERSIGHT_TOOL_MODE` environment variable
+- **Improved error messages**: Configuration-aware error responses with helpful hints
+- **Better monitoring**: Enhanced startup logging shows tool counts and configuration details
+
+**Migration Notes:**
+- Default mode is now `core` (65 tools) for enhanced security
+- Existing deployments will continue to work but will use core mode by default
+- To maintain previous behavior with all tools, set `INTERSIGHT_TOOL_MODE=all`
+- API responses now include configuration context in error messages
+- Health and info endpoints show current tool mode and counts
+
+**Configuration Examples:**
+
+For monitoring and dashboards (recommended):
+```bash
+# Uses core mode with 65 read-only tools
+docker-compose up -d
+```
+
+For full administrative access:
+```bash
+# Uses all mode with 199+ tools including CRUD operations
+INTERSIGHT_TOOL_MODE=all docker-compose up -d
+```
 
 ## Support
 
