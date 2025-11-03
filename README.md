@@ -2,6 +2,25 @@
 
 An MCP (Model Context Protocol) server that enables LLMs to interact with Cisco Intersight APIs. This server exposes Intersight operations as tools for LLM applications.
 
+## 🔧 Tool Configuration Modes
+
+The server supports two configuration modes:
+
+- **🛡️ Core Mode (Default)**: 65 essential read-only tools for safe exploration
+- **🚀 All Tools Mode**: 199+ complete toolset with full CRUD capabilities
+
+See [TOOL_CONFIGURATION.md](TOOL_CONFIGURATION.md) for detailed configuration options.
+
+### Quick Configuration
+
+```bash
+# Core mode (65 tools, read-only) - Default
+export INTERSIGHT_TOOL_MODE=core
+
+# All tools mode (199+ tools, full CRUD)
+export INTERSIGHT_TOOL_MODE=all
+```
+
 ### Prerequisites
 - Node.js 16+ installed
 - VSCode with GitHub Copilot or Claude Desktop
@@ -31,7 +50,8 @@ npm run build
       "env": {
         "INTERSIGHT_API_KEY_ID": "your-api-key-id",
         "INTERSIGHT_API_SECRET_KEY_PATH": "/path/to/SecretKey.txt",
-        "INTERSIGHT_BASE_URL": "https://intersight.com/api/v1"
+        "INTERSIGHT_BASE_URL": "https://intersight.com/api/v1",
+        "INTERSIGHT_TOOL_MODE": "core"
       }
     }
   }
@@ -58,7 +78,8 @@ npm run build
       "env": {
         "INTERSIGHT_API_KEY_ID": "your-api-key-id",
         "INTERSIGHT_API_SECRET_KEY_PATH": "/path/to/SecretKey.txt",
-        "INTERSIGHT_BASE_URL": "https://intersight.com/api/v1"
+        "INTERSIGHT_BASE_URL": "https://intersight.com/api/v1",
+        "INTERSIGHT_TOOL_MODE": "core"
       }
     }
   }
@@ -453,6 +474,26 @@ Watch the Claude Desktop MCP integration in action:
 - `get_ansible_examples` - Access Ansible modules, playbooks, and CVD FlashStack solutions (triple-source automation resources)
 
 ## Version History
+
+### Version 1.0.15
+
+**Tool Configuration & Security Enhancement**
+- ✅ **Configurable Tool Modes**
+  - Core Mode (Default): 65 essential read-only tools for safe exploration
+  - All Tools Mode: 199+ complete toolset with full CRUD capabilities
+  - Environment variable configuration: `INTERSIGHT_TOOL_MODE=core|all`
+- ✅ **Enhanced Security**
+  - Server-side tool filtering prevents exposure of dangerous operations
+  - Runtime security checks with clear error messages
+  - Default safe mode prevents destructive operations
+- ✅ **Flexible Configuration**
+  - JSON configuration file support (`intersight-mcp-server-config.json`)
+  - Environment variable overrides for easy deployment
+  - Multiple server instances with different tool sets
+- ✅ **Documentation & Testing**
+  - Comprehensive tool configuration guide
+  - Verified core mode safety and all tools functionality
+  - Updated Claude Desktop and VS Code integration examples
 
 ### Version 1.0.14
 

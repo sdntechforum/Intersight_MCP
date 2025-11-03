@@ -6,17 +6,21 @@ import {
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import { IntersightApiService } from './services/intersightApi.js';
-import { loadConfig } from './utils/config.js';
+import { loadConfig, loadMCPServerConfig, isToolEnabled, getEnabledTools, MCPServerConfig } from './utils/config.js';
 
 export class IntersightMCPServer {
   private server: Server;
   private apiService: IntersightApiService;
+  private mcpConfig: MCPServerConfig;
 
   constructor() {
+    // Load MCP server configuration
+    this.mcpConfig = loadMCPServerConfig();
+    
     this.server = new Server(
       {
-        name: 'intersight',
-        version: '1.0.0',
+        name: this.mcpConfig.serverConfig.name,
+        version: '1.0.15',
       },
       {
         capabilities: {
@@ -37,14 +41,36 @@ export class IntersightMCPServer {
   private setupHandlers(): void {
     // List available tools
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+      const allTools = this.getAllTools();
+      const enabledTools = getEnabledTools(allTools, this.mcpConfig);
+      
+      // Log tool configuration for debugging
+      console.error(`Intersight MCP Server: Exposing ${enabledTools.length} of ${allTools.length} tools`);
+      console.error(`Tool mode: ${this.mcpConfig.serverConfig.toolSelectionMode}`);
+      console.error(`Enable all tools: ${this.mcpConfig.serverConfig.enableAllTools}`);
+      
       return {
-        tools: this.getTools(),
+        tools: enabledTools,
       };
     });
 
     // Handle tool calls
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
+
+      // Security check: verify tool is enabled
+      const allToolNames = this.getAllTools().map(t => t.name);
+      if (!isToolEnabled(name, this.mcpConfig, allToolNames)) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Error: Tool '${name}' is not enabled in current configuration. Use INTERSIGHT_TOOL_MODE=all to enable all tools.`,
+            },
+          ],
+          isError: true,
+        };
+      }
 
       try {
         const result = await this.handleToolCall(name, args || {});
@@ -70,7 +96,7 @@ export class IntersightMCPServer {
     });
   }
 
-  private getTools(): Tool[] {
+  private getAllTools(): Tool[] {
     return [
       // Inventory & Discovery Tools
       {

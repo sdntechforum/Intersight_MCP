@@ -1,6 +1,197 @@
 import fs from 'fs';
 import { IntersightConfig } from '../services/intersightApi.js';
 
+export interface MCPServerConfig {
+  serverConfig: {
+    name: string;
+    toolSelectionMode: 'whitelist' | 'blacklist' | 'all';
+    enableAllTools: boolean;
+    serverProfileFocus: boolean;
+  };
+  toolConfiguration: {
+    enabledTools: string[];
+    disabledTools: string[];
+    serverProfileFocus?: {
+      enabled: boolean;
+      priorityTools: string[];
+    };
+  };
+}
+
+// Core 65 tools for basic Intersight operations
+const CORE_65_TOOLS = [
+  // Inventory & Discovery (8 tools)
+  'list_compute_servers',
+  'get_server_details', 
+  'list_chassis',
+  'list_fabric_interconnects',
+  'list_compute_blades',
+  'list_compute_rack_units',
+  'list_compute_boards',
+  'search_resources',
+
+  // Alarms & Monitoring (3 tools)
+  'list_alarms',
+  'get_tam_advisory_count',
+  'list_tam_advisories',
+
+  // Policy Management (12 tools)
+  'list_policies',
+  'get_policy',
+  'list_server_profiles',
+  'get_server_profile',
+  'list_bios_units',
+  'list_boot_device_boot_modes',
+  'list_adapter_config_policies',
+  'get_adapter_config_policy',
+  'list_lan_connectivity_policies',
+  'get_lan_connectivity_policy',
+  'list_vnics',
+  'get_vnic',
+
+  // Pool Management (6 tools)
+  'list_pools',
+  'list_ippool_blocks',
+  'list_macpool_blocks',
+  'list_fcpool_blocks',
+  'get_ippool_block',
+  'get_macpool_block',
+
+  // Telemetry & Monitoring (15 tools)
+  'get_server_telemetry',
+  'get_chassis_telemetry',
+  'get_adapter_telemetry',
+  'get_top_resources',
+  'list_processor_units',
+  'list_memory_units',
+  'list_storage_controllers',
+  'list_physical_drives',
+  'get_power_statistics',
+  'get_thermal_statistics',
+  'list_fan_modules',
+  'list_psu_units',
+  'list_storage_virtual_drives',
+  'list_pci_devices',
+  'list_graphics_cards',
+
+  // Hardware & Firmware (8 tools)
+  'list_firmware_running',
+  'list_licenses',
+  'list_hcl_operating_systems',
+  'list_hcl_operating_system_vendors',
+  'list_hcl_hyperflex_compatibility',
+  'list_equipment_io_cards',
+  'list_equipment_sys_io_ctrls',
+  'list_management_controllers',
+
+  // Fabric & Network (6 tools)
+  'list_fabric_vlans',
+  'get_fabric_vlan',
+  'list_fabric_vsans',
+  'get_fabric_vsan',
+  'list_fabric_port_channels',
+  'get_fabric_port_channel',
+
+  // Workflow & System (4 tools)
+  'list_workflows',
+  'get_workflow',
+  'list_top_systems',
+  'get_top_system',
+
+  // Code Examples (3 tools)
+  'get_powershell_examples',
+  'get_python_examples',
+  'get_terraform_examples'
+];
+
+export function loadMCPServerConfig(): MCPServerConfig {
+  const configPath = process.env.INTERSIGHT_CONFIG_FILE || 
+    './intersight-mcp-server-config.json';
+  
+  let config: MCPServerConfig;
+  
+  try {
+    if (fs.existsSync(configPath)) {
+      config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } else {
+      // Default configuration
+      config = {
+        serverConfig: {
+          name: 'intersight',
+          toolSelectionMode: 'whitelist',
+          enableAllTools: false,
+          serverProfileFocus: false
+        },
+        toolConfiguration: {
+          enabledTools: CORE_65_TOOLS,
+          disabledTools: []
+        }
+      };
+    }
+  } catch (error) {
+    console.error('Error loading MCP config, using defaults:', error);
+    config = {
+      serverConfig: {
+        name: 'intersight',
+        toolSelectionMode: 'whitelist',
+        enableAllTools: false,
+        serverProfileFocus: false
+      },
+      toolConfiguration: {
+        enabledTools: CORE_65_TOOLS,
+        disabledTools: []
+      }
+    };
+  }
+  
+  // Override with environment variables
+  if (process.env.INTERSIGHT_TOOL_MODE === 'all') {
+    config.serverConfig.enableAllTools = true;
+    config.serverConfig.toolSelectionMode = 'all';
+  } else if (process.env.INTERSIGHT_TOOL_MODE === 'core') {
+    config.serverConfig.enableAllTools = false;
+    config.serverConfig.toolSelectionMode = 'whitelist';
+    config.toolConfiguration.enabledTools = CORE_65_TOOLS;
+  }
+  
+  if (process.env.INTERSIGHT_ENABLE_ALL_TOOLS === 'true') {
+    config.serverConfig.enableAllTools = true;
+    config.serverConfig.toolSelectionMode = 'all';
+  }
+  
+  if (process.env.INTERSIGHT_PROFILE_FOCUS === 'true') {
+    config.serverConfig.serverProfileFocus = true;
+  }
+  
+  return config;
+}
+
+export function isToolEnabled(toolName: string, config: MCPServerConfig, allTools: string[]): boolean {
+  if (config.serverConfig.toolSelectionMode === 'all' || config.serverConfig.enableAllTools) {
+    return true;
+  }
+  
+  if (config.serverConfig.toolSelectionMode === 'whitelist') {
+    return config.toolConfiguration.enabledTools.includes(toolName);
+  }
+  
+  if (config.serverConfig.toolSelectionMode === 'blacklist') {
+    return !config.toolConfiguration.disabledTools.some(pattern => {
+      if (pattern.includes('*')) {
+        const regex = new RegExp(pattern.replace(/\*/g, '.*'));
+        return regex.test(toolName);
+      }
+      return pattern === toolName;
+    });
+  }
+  
+  return false;
+}
+
+export function getEnabledTools(allTools: any[], config: MCPServerConfig): any[] {
+  return allTools.filter(tool => isToolEnabled(tool.name, config, allTools.map(t => t.name)));
+}
+
 export function loadConfig(): IntersightConfig {
   const apiKeyId = process.env.INTERSIGHT_API_KEY_ID;
   const apiSecretKeyPath = process.env.INTERSIGHT_API_SECRET_KEY_PATH;
