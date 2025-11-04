@@ -6,7 +6,7 @@ The Intersight MCP Server supports configurable tool sets to balance functionali
 
 ## 🎯 Configuration Modes
 
-### 1. Core Mode (Default) - 65 Essential Tools
+### 1. Core Mode (Default) - 66 Essential Tools
 
 Safe, read-only tools for basic Intersight operations:
 
@@ -92,6 +92,9 @@ Safe, read-only tools for basic Intersight operations:
   * `get_powershell_examples` - Get PowerShell module examples
   * `get_terraform_examples` - Get Terraform infrastructure examples
   * `get_ansible_examples` - Get Ansible automation examples
+
+- **Security & Health Check Agent (1 tool)**
+  * `generate_security_health_report` - Generate comprehensive security and health check report
 
 ### 2. All Tools Mode - 199+ Complete Toolset
 

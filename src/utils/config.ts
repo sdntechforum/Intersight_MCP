@@ -123,7 +123,10 @@ const CORE_65_TOOLS = [
   'get_powershell_examples',
   'get_python_examples',
   'get_terraform_examples',
-  'get_ansible_examples'
+  'get_ansible_examples',
+
+  // Security & Health Check Agent (1 tool)
+  'generate_security_health_report'
 ];
 
 export function loadMCPServerConfig(): MCPServerConfig {
