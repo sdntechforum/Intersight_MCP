@@ -96,11 +96,10 @@ const CORE_65_TOOLS = [
   'list_pci_devices',
   'list_graphics_cards',
 
-  // Hardware & Firmware (8 tools)
+  // Hardware & Firmware (7 tools)
   'list_firmware_running',
   'list_licenses',
   'list_hcl_operating_systems',
-  'get_ansible_examples',
   'list_hcl_hyperflex_compatibility',
   'list_equipment_io_cards',
   'list_equipment_sys_io_ctrls',
@@ -120,10 +119,11 @@ const CORE_65_TOOLS = [
   'list_top_systems',
   'get_top_system',
 
-  // Code Examples (3 tools)
+  // Code Examples (4 tools)
   'get_powershell_examples',
   'get_python_examples',
-  'get_terraform_examples'
+  'get_terraform_examples',
+  'get_ansible_examples'
 ];
 
 export function loadMCPServerConfig(): MCPServerConfig {

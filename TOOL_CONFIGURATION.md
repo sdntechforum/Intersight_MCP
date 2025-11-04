@@ -64,11 +64,10 @@ Safe, read-only tools for basic Intersight operations:
   * `list_pci_devices` - List PCI devices
   * `list_graphics_cards` - List graphics cards/GPUs
 
-- ✅ **Hardware & Firmware (8 tools)**
+- ✅ **Hardware & Firmware (7 tools)**
   * `list_firmware_running` - List running firmware versions
   * `list_licenses` - List license information
   * `list_hcl_operating_systems` - List supported operating systems
-  * `get_ansible_examples` - Get Ansible automation examples
   * `list_hcl_hyperflex_compatibility` - List HyperFlex compatibility
   * `list_equipment_io_cards` - List IO cards
   * `list_equipment_sys_io_ctrls` - List system IO controllers
@@ -88,10 +87,10 @@ Safe, read-only tools for basic Intersight operations:
   * `list_top_systems` - List top-level systems
   * `get_top_system` - Get system details
 
-- ✅ **Code Examples (3 tools)**
-  * `get_powershell_examples` - Get PowerShell SDK examples
-  * `get_python_examples` - Get Python SDK examples
-  * `get_terraform_examples` - Get Terraform examples
+- **Code Examples (3 tools)**
+  * `get_python_examples` - Get Python SDK programming examples
+  * `get_powershell_examples` - Get PowerShell module examples
+  * `get_ansible_examples` - Get Ansible automation examples
 
 ### 2. All Tools Mode - 199+ Complete Toolset
 
