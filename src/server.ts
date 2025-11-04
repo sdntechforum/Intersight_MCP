@@ -4543,6 +4543,7 @@ export class IntersightMCPServer {
           alarms,
           advisoryCount,
           advisories,
+          advisoryInstances,
           firmware,
           operatingSystems,
           licenses,
@@ -4559,6 +4560,7 @@ export class IntersightMCPServer {
           this.apiService.listAlarms('').catch(() => ({ Results: [] })),
           this.apiService.get('/tam/AdvisoryCounts').catch(() => ({ critical: 0, warning: 0, info: 0 })),
           this.apiService.get('/tam/AdvisoryDefinitions').catch(() => ({ Results: [] })),
+          this.apiService.get('/tam/AdvisoryInstances').catch(() => ({ Results: [] })),
           this.apiService.get('/firmware/RunningFirmwares').catch(() => ({ Results: [] })),
           this.apiService.get('/hcl/OperatingSystems').catch(() => ({ Results: [] })),
           this.apiService.get('/license/LicenseInfos').catch(() => ({ Results: [] })),
@@ -4576,6 +4578,9 @@ export class IntersightMCPServer {
         // Get thermal and power data from actual servers
         const thermalData = await this.apiService.get('/compute/PhysicalSummaries?$select=Moid,Name,Temperature').catch(() => ({ Results: [] }));
         const powerData = await this.apiService.get('/compute/PhysicalSummaries?$select=Moid,Name,AllocatedPower,PowerState').catch(() => ({ Results: [] }));
+        
+        // Get all servers for MOID-to-name resolution
+        const allServers = await this.apiService.get('/compute/PhysicalSummaries?$select=Moid,Name,Model,Serial').catch(() => ({ Results: [] }));
 
         // Get top resources for performance analysis
         const topCpuServers = await this.apiService.get('/compute/PhysicalSummaries?$top=5&$orderby=CpuCapacity desc').catch(() => ({ Results: [] }));
@@ -4611,6 +4616,7 @@ export class IntersightMCPServer {
         const report = createSecurityHealthCheckReport(
           alarms?.Results || [],
           advisories?.Results || [],
+          advisoryInstances?.Results || [],
           advisoryCount,
           firmware?.Results || [],
           operatingSystems?.Results || [],
@@ -4622,10 +4628,17 @@ export class IntersightMCPServer {
           bootSecurity?.Results || [],
           policies?.Results || [],
           hyperflexCompat?.Results?.[0] || null,
-          topResources
+          topResources,
+          allServers?.Results || []
         );
 
         console.error('✅ Security & Health Check Report generated successfully');
+        console.error('📊 Report includes:');
+        console.error(`   - ${report.alarms.total} alarms analyzed (${report.alarms.critical} critical)`);
+        console.error(`   - ${report.advisories.total} advisories reviewed (${report.advisories.fieldNotices} field notices, ${report.advisories.eolAdvisories} EOL)`);
+        console.error(`   - ${report.firmware.components} firmware components checked`);
+        console.error(`   - ${report.summary.infrastructureOverview.totalServers} servers assessed`);
+        console.error(`   - All affected devices tracked and resolved by name`);
         return report;
 
       default:

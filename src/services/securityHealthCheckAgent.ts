@@ -43,6 +43,7 @@ export interface SecurityHealthCheckResult {
   reportType: 'SECURITY' | 'HEALTH' | 'COMPREHENSIVE';
   executionTimeMs: number;
   
+  // Executive Summary
   summary: {
     overallScore: number; // 0-100, higher is better
     securityScore: number;
@@ -50,22 +51,83 @@ export interface SecurityHealthCheckResult {
     complianceScore: number;
     criticalCount: number;
     warningCount: number;
+    infrastructureOverview: {
+      totalServers: number;
+      totalAlarms: number;
+      totalAdvisories: number;
+      firmwareComponents: number;
+      healthyComponents: number;
+      degradedComponents: number;
+    };
   };
 
   alarms: {
     critical: number;
     warning: number;
     info: number;
-    topAlarms: Array<{ id: string; description: string; severity: string }>;
+    total: number;
+    topAlarms: Array<{ 
+      id: string; 
+      description: string; 
+      severity: string;
+      affectedDevice: string;
+      affectedDeviceType: string;
+      code: string;
+      createTime: string;
+      acknowledged: boolean;
+    }>;
+    alarmsByCode: Array<{
+      code: string;
+      count: number;
+      severity: string;
+      description: string;
+      affectedDevices: Array<{
+        name: string;
+        type: string;
+        severity: string;
+        createTime: string;
+      }>;
+    }>;
+    alarmsByDeviceType: Array<{
+      deviceType: string;
+      count: number;
+      criticalCount: number;
+    }>;
   };
 
   advisories: {
     critical: number;
     warning: number;
     info: number;
+    total: number;
     securityAdvisories: number;
     fieldNotices: number;
-    topAdvisories: Array<{ id: string; title: string; type: string }>;
+    eolAdvisories: number;
+    topAdvisories: Array<{ 
+      id: string; 
+      title: string; 
+      type: string;
+      severity?: string;
+      cveIds?: string[];
+      affectedPlatforms?: string[];
+      datePublished?: string;
+      description?: string;
+      recommendation?: string;
+      affectedDevices?: Array<{
+        name: string;
+        model?: string;
+        version?: string;
+      }>;
+    }>;
+    advisoriesByType: Array<{
+      type: string;
+      count: number;
+      criticalCount: number;
+      affectedDevices?: Array<{
+        name: string;
+        model?: string;
+      }>;
+    }>;
   };
 
   firmware: {
@@ -78,6 +140,15 @@ export interface SecurityHealthCheckResult {
       currentVersion: string;
       recommendedVersion: string;
       securityCritical: boolean;
+      affectedDevices?: string[];
+      deviceCount?: number;
+      releaseNotes?: string;
+      vulnerabilitiesFixed?: string[];
+    }>;
+    componentsByType: Array<{
+      componentType: string;
+      count: number;
+      versions: string[];
     }>;
   };
 
@@ -85,6 +156,8 @@ export interface SecurityHealthCheckResult {
     healthStatus: 'HEALTHY' | 'DEGRADED' | 'CRITICAL';
     totalServers: number;
     healthyServers: number;
+    degradedServers: number;
+    failedServers: number;
     thermalStatus: 'NORMAL' | 'WARNING' | 'CRITICAL';
     powerRedundancy: 'FULL' | 'DEGRADED' | 'SINGLE';
     failedComponents: {
@@ -92,6 +165,13 @@ export interface SecurityHealthCheckResult {
       memory: number;
       drives: number;
       psus: number;
+    };
+    componentDetails: {
+      processors: { total: number; healthy: number; degraded: number; failed: number };
+      memory: { total: number; healthy: number; degraded: number; failed: number };
+      drives: { total: number; healthy: number; degraded: number; failed: number };
+      psus: { total: number; healthy: number; degraded: number; failed: number };
+      fans: { total: number; healthy: number; degraded: number; failed: number };
     };
   };
 
@@ -144,6 +224,7 @@ export interface SecurityHealthCheckResult {
 export function createSecurityHealthCheckReport(
   alarms: any,
   advisories: any,
+  advisoryInstances: any,
   advisoryCount: any,
   firmware: any,
   operatingSystems: any,
@@ -155,11 +236,14 @@ export function createSecurityHealthCheckReport(
   bootSecurity: any,
   policies: any,
   hyperflexCompat: any,
-  topResources: any
+  topResources: any,
+  servers: any
 ): SecurityHealthCheckResult {
   const startTime = Date.now();
   const alarmsList = Array.isArray(alarms) ? alarms : [];
   const advisoryList = Array.isArray(advisories) ? advisories : [];
+  const advisoryInstancesList = Array.isArray(advisoryInstances) ? advisoryInstances : [];
+  const serversList = Array.isArray(servers) ? servers : [];
   const firmwareList = Array.isArray(firmware) ? firmware : [];
   const osVersions = Array.isArray(operatingSystems) ? operatingSystems : [];
   const licensesList = Array.isArray(licenses) ? licenses : [];
@@ -172,7 +256,7 @@ export function createSecurityHealthCheckReport(
   const alarmAnalysis = analyzeAlarms(alarmsList);
 
   // Phase 2: Analyze advisories and CVEs
-  const advisoryAnalysis = analyzeAdvisories(advisoryList, advisoryCount);
+  const advisoryAnalysis = analyzeAdvisories(advisoryList, advisoryInstancesList, advisoryCount, serversList);
 
   // Phase 3: Analyze firmware
   const firmwareAnalysis = analyzeFirmware(firmwareList);
@@ -213,7 +297,23 @@ export function createSecurityHealthCheckReport(
       healthScore: Math.max(0, healthScore),
       complianceScore: Math.max(0, complianceScore),
       criticalCount: Math.max(alarmAnalysis.critical, advisoryAnalysis.critical),
-      warningCount: alarmAnalysis.warning + advisoryAnalysis.warning
+      warningCount: alarmAnalysis.warning + advisoryAnalysis.warning,
+      infrastructureOverview: {
+        totalServers: hardwareAnalysis.totalServers || 0,
+        totalAlarms: alarmAnalysis.total || 0,
+        totalAdvisories: advisoryAnalysis.total || 0,
+        firmwareComponents: firmwareAnalysis.components || 0,
+        healthyComponents: (hardwareAnalysis.componentDetails?.processors.healthy || 0) +
+                          (hardwareAnalysis.componentDetails?.memory.healthy || 0) +
+                          (hardwareAnalysis.componentDetails?.drives.healthy || 0) +
+                          (hardwareAnalysis.componentDetails?.psus.healthy || 0) +
+                          (hardwareAnalysis.componentDetails?.fans.healthy || 0),
+        degradedComponents: (hardwareAnalysis.componentDetails?.processors.degraded || 0) +
+                           (hardwareAnalysis.componentDetails?.memory.degraded || 0) +
+                           (hardwareAnalysis.componentDetails?.drives.degraded || 0) +
+                           (hardwareAnalysis.componentDetails?.psus.degraded || 0) +
+                           (hardwareAnalysis.componentDetails?.fans.degraded || 0)
+      }
     },
 
     alarms: alarmAnalysis,
@@ -231,40 +331,241 @@ export function createSecurityHealthCheckReport(
 }
 
 function analyzeAlarms(alarms: any[]): any {
-  const critical = alarms.filter(a => a.severity === 'Critical' || a.severity === 'critical').length;
-  const warning = alarms.filter(a => a.severity === 'Warning' || a.severity === 'warning').length;
-  const info = alarms.filter(a => a.severity === 'Info' || a.severity === 'info').length;
+  const critical = alarms.filter(a => 
+    a.Severity === 'Critical' || a.severity === 'Critical' || 
+    a.Severity === 'critical' || a.severity === 'critical'
+  ).length;
+  const warning = alarms.filter(a => 
+    a.Severity === 'Warning' || a.severity === 'Warning' || 
+    a.Severity === 'warning' || a.severity === 'warning'
+  ).length;
+  const info = alarms.filter(a => 
+    a.Severity === 'Info' || a.severity === 'Info' || 
+    a.Severity === 'info' || a.severity === 'info'
+  ).length;
+
+  // Group alarms by code with affected device tracking
+  const alarmsByCodeMap = new Map<string, { 
+    count: number; 
+    severity: string; 
+    description: string;
+    devices: Array<{ name: string; type: string; severity: string; createTime: string }>;
+  }>();
+  
+  alarms.forEach(a => {
+    const code = a.Code || a.code || 'UNKNOWN';
+    const deviceName = a.AffectedMoDisplayName || a.affectedMoDisplayName || a.AffectedObject || a.affectedObject || a.Dn || a.dn || 'Unknown';
+    const deviceType = a.AffectedMoType || a.affectedMoType || 'Unknown';
+    const severity = a.Severity || a.severity || 'Unknown';
+    const createTime = a.CreateTime || a.createTime || a.CreationTime || a.creationTime || 'Unknown';
+    
+    if (!alarmsByCodeMap.has(code)) {
+      alarmsByCodeMap.set(code, {
+        count: 0,
+        severity: severity,
+        description: a.Description || a.description || 'Unknown',
+        devices: []
+      });
+    }
+    const entry = alarmsByCodeMap.get(code)!;
+    entry.count++;
+    entry.devices.push({ name: deviceName, type: deviceType, severity, createTime });
+  });
+
+  const alarmsByCode = Array.from(alarmsByCodeMap.entries())
+    .map(([code, data]) => ({ 
+      code, 
+      count: data.count,
+      severity: data.severity,
+      description: data.description,
+      affectedDevices: data.devices.slice(0, 50) // Limit to 50 devices per alarm code
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+
+  // Group alarms by device type
+  const alarmsByDeviceTypeMap = new Map<string, { count: number; criticalCount: number }>();
+  alarms.forEach(a => {
+    const deviceType = a.AffectedMoType || a.affectedMoType || 'Unknown';
+    if (!alarmsByDeviceTypeMap.has(deviceType)) {
+      alarmsByDeviceTypeMap.set(deviceType, { count: 0, criticalCount: 0 });
+    }
+    const entry = alarmsByDeviceTypeMap.get(deviceType)!;
+    entry.count++;
+    if ((a.Severity || a.severity || '').toLowerCase() === 'critical') {
+      entry.criticalCount++;
+    }
+  });
+
+  const alarmsByDeviceType = Array.from(alarmsByDeviceTypeMap.entries())
+    .map(([deviceType, data]) => ({ deviceType, ...data }))
+    .sort((a, b) => b.criticalCount - a.criticalCount || b.count - a.count)
+    .slice(0, 10);
 
   return {
     critical,
     warning,
     info,
-    topAlarms: alarms.filter(a => a.severity === 'Critical' || a.severity === 'critical').slice(0, 5).map((a: any) => ({
-      id: a.moid || 'unknown',
-      description: a.description || 'Unknown alarm',
-      severity: a.severity
-    }))
+    total: alarms.length,
+    topAlarms: alarms.filter(a => 
+      a.Severity === 'Critical' || a.severity === 'Critical' || 
+      a.Severity === 'critical' || a.severity === 'critical'
+    ).slice(0, 10).map((a: any) => ({
+      id: a.Moid || a.moid || 'unknown',
+      description: a.Description || a.description || 'Unknown alarm',
+      severity: a.Severity || a.severity,
+      affectedDevice: a.AffectedMoDisplayName || a.affectedMoDisplayName || a.AffectedObject || a.affectedObject || a.Dn || a.dn || 'Unknown',
+      affectedDeviceType: a.AffectedMoType || a.affectedMoType || 'Unknown',
+      code: a.Code || a.code || 'Unknown',
+      createTime: a.CreateTime || a.createTime || a.CreationTime || a.creationTime || 'Unknown',
+      acknowledged: (a.Acknowledge || a.acknowledge || 'None') !== 'None'
+    })),
+    alarmsByCode,
+    alarmsByDeviceType
   };
 }
 
-function analyzeAdvisories(advisories: any[], advisoryCount: any): any {
-  const critical = (advisoryCount?.critical || 0) + advisories.filter(a => a.severity === 'Critical' || a.type === 'securityAdvisory').length;
+function analyzeAdvisories(advisories: any[], advisoryInstances: any[], advisoryCount: any, servers: any[]): any {
+  const critical = (advisoryCount?.critical || 0) + advisories.filter(a => 
+    a.Severity === 'Critical' || a.severity === 'Critical' || a.Type === 'securityAdvisory' || a.type === 'securityAdvisory'
+  ).length;
   const warning = advisoryCount?.warning || 0;
   const info = advisoryCount?.info || 0;
-  const securityAdvisories = advisories.filter(a => a.type === 'securityAdvisory' || a.title?.includes('CVE')).length;
-  const fieldNotices = advisories.filter(a => a.type === 'fieldNotice').length;
+  const securityAdvisories = advisories.filter(a => 
+    a.Type === 'securityAdvisory' || a.type === 'securityAdvisory' || 
+    (a.Title || a.title || '').includes('CVE')
+  ).length;
+  const fieldNotices = advisories.filter(a => 
+    a.Type === 'fieldNotice' || a.type === 'fieldNotice'
+  ).length;
+  const eolAdvisories = advisories.filter(a =>
+    a.Type === 'eolAdvisory' || a.type === 'eolAdvisory'
+  ).length;
+
+  // Build MOID to name lookup map
+  const moidToName = new Map<string, { name: string; model: string }>();
+  servers.forEach(server => {
+    const moid = server.Moid || server.moid;
+    const name = server.Name || server.name || 'Unknown Server';
+    const model = server.Model || server.model || '';
+    if (moid) {
+      moidToName.set(moid, { name, model });
+    }
+  });
+
+  // Build a map of advisory instances by advisory definition ID
+  const instancesByAdvisory = new Map<string, any[]>();
+  advisoryInstances.forEach((instance: any) => {
+    const advisoryId = instance.Advisory?.Moid || instance.advisory?.moid;
+    if (advisoryId) {
+      if (!instancesByAdvisory.has(advisoryId)) {
+        instancesByAdvisory.set(advisoryId, []);
+      }
+      instancesByAdvisory.get(advisoryId)!.push(instance);
+    }
+  });
+
+  // Group advisories by type with affected device tracking
+  const advisoriesByTypeMap = new Map<string, { 
+    count: number; 
+    criticalCount: number;
+    devices: Set<string>;
+  }>();
+  
+  advisories.forEach(a => {
+    const type = a.Type || a.type || 'advisory';
+    if (!advisoriesByTypeMap.has(type)) {
+      advisoriesByTypeMap.set(type, { count: 0, criticalCount: 0, devices: new Set() });
+    }
+    const entry = advisoriesByTypeMap.get(type)!;
+    entry.count++;
+    const severity = a.Severity || a.severity || '';
+    const severityStr = typeof severity === 'string' ? severity : String(severity);
+    if (severityStr.toLowerCase() === 'critical') {
+      entry.criticalCount++;
+    }
+    
+    // Add affected devices from instances
+    const advisoryId = a.Moid || a.moid;
+    const instances = instancesByAdvisory.get(advisoryId) || [];
+    instances.forEach(inst => {
+      const deviceMoid = inst.AffectedObjectMoid || inst.affectedObjectMoid || 
+                        inst.AffectedObject || inst.affectedObject || 'Unknown';
+      // Resolve MOID to name if available
+      const deviceInfo = moidToName.get(deviceMoid);
+      const deviceName = deviceInfo ? deviceInfo.name : deviceMoid;
+      entry.devices.add(deviceName);
+    });
+  });
+
+  const advisoriesByType = Array.from(advisoriesByTypeMap.entries())
+    .map(([type, data]) => ({ 
+      type, 
+      count: data.count,
+      criticalCount: data.criticalCount,
+      affectedDevices: Array.from(data.devices).slice(0, 20).map(name => {
+        // If it's still a MOID (no match found), leave as is
+        return { name };
+      })
+    }))
+    .sort((a, b) => b.criticalCount - a.criticalCount || b.count - a.count);
 
   return {
     critical,
     warning,
     info,
+    total: advisories.length,
     securityAdvisories,
     fieldNotices,
-    topAdvisories: advisories.slice(0, 5).map((a: any) => ({
-      id: a.moid || 'unknown',
-      title: a.title || 'Unknown advisory',
-      type: a.type || 'advisory'
-    }))
+    eolAdvisories,
+    topAdvisories: advisories.slice(0, 15).map((a: any) => {
+      // Extract CVE IDs from description or external references
+      const cveIds: string[] = [];
+      const description = a.Description || a.description || '';
+      const title = a.Title || a.title || a.Name || a.name || '';
+      const combinedText = `${title} ${description}`;
+      const cveMatches = combinedText.match(/CVE-\d{4}-\d{4,7}/g);
+      if (cveMatches) {
+        cveIds.push(...cveMatches);
+      }
+
+      // Extract affected platforms
+      const affectedPlatforms: string[] = [];
+      if (a.AffectedPids || a.affectedPids) {
+        const pids = a.AffectedPids || a.affectedPids;
+        if (Array.isArray(pids)) {
+          affectedPlatforms.push(...pids);
+        }
+      }
+
+      // Get affected devices from instances
+      const advisoryId = a.Moid || a.moid;
+      const instances = instancesByAdvisory.get(advisoryId) || [];
+      const affectedDevices = instances.slice(0, 50).map((inst: any) => {
+        const deviceMoid = inst.AffectedObjectMoid || inst.affectedObjectMoid || inst.Dn || inst.dn || 'Unknown';
+        const deviceInfo = moidToName.get(deviceMoid);
+        
+        return {
+          name: deviceInfo ? deviceInfo.name : deviceMoid,
+          model: deviceInfo?.model || inst.AffectedObjectType || inst.affectedObjectType,
+          version: inst.AffectedFirmwareVersion || inst.affectedFirmwareVersion
+        };
+      });
+
+      return {
+        id: advisoryId || 'unknown',
+        title: title || 'Unknown advisory',
+        type: a.Type || a.type || 'advisory',
+        severity: a.Severity || a.severity,
+        cveIds: cveIds.length > 0 ? cveIds : undefined,
+        affectedPlatforms: affectedPlatforms.length > 0 ? affectedPlatforms : undefined,
+        datePublished: a.DatePublished || a.datePublished || a.CreateTime || a.createTime,
+        description: (description || '').substring(0, 500),
+        recommendation: (a.Recommendation || a.recommendation || '').substring(0, 500),
+        affectedDevices: affectedDevices.length > 0 ? affectedDevices : undefined
+      };
+    }),
+    advisoriesByType
   };
 }
 
@@ -274,42 +575,224 @@ function analyzeFirmware(firmware: any[]): any {
   const outdated = firmware.filter((f: any) => f.status === 'OUTDATED').length;
   const endOfLife = firmware.filter((f: any) => f.status === 'DEPRECATED' || f.status === 'END_OF_LIFE').length;
 
-  const updateRecommendations = firmware
-    .filter((f: any) => f.recommendedVersion && f.version !== f.recommendedVersion)
-    .slice(0, 5)
-    .map((f: any) => ({
-      component: f.componentType || 'Unknown',
-      currentVersion: f.version || 'Unknown',
-      recommendedVersion: f.recommendedVersion,
-      securityCritical: f.securityCritical === true
-    }));
+  // Group firmware by component type
+  const componentsByTypeMap = new Map<string, Set<string>>();
+  firmware.forEach((f: any) => {
+    const component = f.Component || f.component || f.Type || f.type || 'Unknown';
+    const version = (f.Version || f.version || 'Unknown').trim();
+    if (!componentsByTypeMap.has(component)) {
+      componentsByTypeMap.set(component, new Set());
+    }
+    componentsByTypeMap.get(component)!.add(version);
+  });
+
+  const componentsByType = Array.from(componentsByTypeMap.entries())
+    .map(([componentType, versions]) => ({
+      componentType,
+      count: firmware.filter(f => (f.Component || f.component || f.Type || f.type) === componentType).length,
+      versions: Array.from(versions).sort()
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  // Group firmware by component type and version to find update recommendations
+  const firmwareGroups = new Map<string, any[]>();
+  firmware.forEach((f: any) => {
+    const component = f.Component || f.component || f.Type || f.type || 'Unknown';
+    const version = f.Version || f.version || 'Unknown';
+    const key = `${component}:${version}`;
+    if (!firmwareGroups.has(key)) {
+      firmwareGroups.set(key, []);
+    }
+    firmwareGroups.get(key)!.push(f);
+  });
+
+  const updateRecommendations: any[] = [];
+  firmwareGroups.forEach((devices, key) => {
+    const sample = devices[0];
+    const component = sample.Component || sample.component || sample.Type || sample.type || 'Unknown';
+    const currentVersion = sample.Version || sample.version || 'Unknown';
+    const recommendedVersion = sample.RecommendedVersion || sample.recommendedVersion;
+    
+    // Only include if there's a recommendation and it's different
+    if (recommendedVersion && currentVersion !== recommendedVersion) {
+      const affectedDeviceNames = devices
+        .map((d: any) => {
+          // Try to get server name from ancestors or parent
+          if (d.Ancestors && Array.isArray(d.Ancestors)) {
+            const serverAncestor = d.Ancestors.find((a: any) => 
+              (a.ObjectType || '').includes('compute.RackUnit') || 
+              (a.ObjectType || '').includes('compute.Blade')
+            );
+            if (serverAncestor) {
+              return serverAncestor.Moid;
+            }
+          }
+          return d.Dn || d.dn || d.Moid || d.moid;
+        })
+        .filter((n: string) => n)
+        .slice(0, 5);
+
+      updateRecommendations.push({
+        component,
+        currentVersion: currentVersion.trim(),
+        recommendedVersion: recommendedVersion.trim(),
+        securityCritical: sample.securityCritical === true || sample.SecurityCritical === true,
+        affectedDevices: affectedDeviceNames,
+        deviceCount: devices.length,
+        releaseNotes: sample.ReleaseNotes || sample.releaseNotes,
+        vulnerabilitiesFixed: sample.VulnerabilitiesFixed || sample.vulnerabilitiesFixed
+      });
+    }
+  });
 
   return {
     components,
     currentlySupported,
     outdated,
     endOfLife,
-    updateRecommendations
+    updateRecommendations: updateRecommendations.slice(0, 15),
+    componentsByType: componentsByType.slice(0, 15)
   };
 }
 
 function analyzeHardware(hardware: any, thermalStats: any, powerStats: any): any {
-  const healthyServers = 1; // Placeholder - would come from hardware data
-  const totalServers = 10; // Placeholder
-  const failedComponents = {
-    processors: 0,
-    memory: 0,
-    drives: 0,
-    psus: 0
+  // Extract component arrays from hardware object
+  const processors = hardware.processors || [];
+  const memory = hardware.memory || [];
+  const drives = hardware.drives || [];
+  const psus = hardware.psus || [];
+  const fans = hardware.fans || [];
+
+  // Analyze processor health
+  const processorHealth = {
+    total: processors.length,
+    healthy: processors.filter((p: any) => 
+      (p.Presence || p.presence) === 'equipped' && 
+      (p.OperState || p.operState) === 'operable'
+    ).length,
+    degraded: processors.filter((p: any) => 
+      (p.Presence || p.presence) === 'equipped' && 
+      (p.OperState || p.operState) === 'degraded'
+    ).length,
+    failed: processors.filter((p: any) => 
+      (p.Presence || p.presence) === 'equipped' && 
+      (p.OperState || p.operState) === 'inoperable'
+    ).length
   };
 
+  // Analyze memory health
+  const memoryHealth = {
+    total: memory.length,
+    healthy: memory.filter((m: any) => 
+      (m.Presence || m.presence) === 'equipped' && 
+      (m.OperState || m.operState) === 'operable'
+    ).length,
+    degraded: memory.filter((m: any) => 
+      (m.Presence || m.presence) === 'equipped' && 
+      (m.OperState || m.operState) === 'degraded'
+    ).length,
+    failed: memory.filter((m: any) => 
+      (m.Presence || m.presence) === 'equipped' && 
+      (m.OperState || m.operState) === 'inoperable'
+    ).length
+  };
+
+  // Analyze drive health
+  const driveHealth = {
+    total: drives.length,
+    healthy: drives.filter((d: any) => 
+      (d.DiskState || d.diskState) === 'good'
+    ).length,
+    degraded: drives.filter((d: any) => 
+      (d.DiskState || d.diskState) === 'predictive-failure' ||
+      (d.DiskState || d.diskState) === 'partially-degraded'
+    ).length,
+    failed: drives.filter((d: any) => 
+      (d.DiskState || d.diskState) === 'failed' ||
+      (d.DiskState || d.diskState) === 'bad'
+    ).length
+  };
+
+  // Analyze PSU health
+  const psuHealth = {
+    total: psus.length,
+    healthy: psus.filter((p: any) => 
+      (p.Presence || p.presence) === 'equipped' && 
+      (p.OperState || p.operState) === 'operable'
+    ).length,
+    degraded: psus.filter((p: any) => 
+      (p.Presence || p.presence) === 'equipped' && 
+      (p.OperState || p.operState) === 'degraded'
+    ).length,
+    failed: psus.filter((p: any) => 
+      (p.Presence || p.presence) === 'equipped' && 
+      (p.OperState || p.operState) === 'inoperable'
+    ).length
+  };
+
+  // Analyze fan health
+  const fanHealth = {
+    total: fans.length,
+    healthy: fans.filter((f: any) => 
+      (f.Presence || f.presence) === 'equipped' && 
+      (f.OperState || f.operState) === 'operable'
+    ).length,
+    degraded: fans.filter((f: any) => 
+      (f.Presence || f.presence) === 'equipped' && 
+      (f.OperState || f.operState) === 'degraded'
+    ).length,
+    failed: fans.filter((f: any) => 
+      (f.Presence || f.presence) === 'equipped' && 
+      (f.OperState || f.operState) === 'inoperable'
+    ).length
+  };
+
+  // Calculate overall metrics
+  const totalComponents = processorHealth.total + memoryHealth.total + driveHealth.total + psuHealth.total + fanHealth.total;
+  const healthyComponents = processorHealth.healthy + memoryHealth.healthy + driveHealth.healthy + psuHealth.healthy + fanHealth.healthy;
+  const degradedComponents = processorHealth.degraded + memoryHealth.degraded + driveHealth.degraded + psuHealth.degraded + fanHealth.degraded;
+  const failedComponentCount = processorHealth.failed + memoryHealth.failed + driveHealth.failed + psuHealth.failed + fanHealth.failed;
+
+  // Legacy structure for backward compatibility
+  const failedComponents = {
+    processors: processorHealth.failed,
+    memory: memoryHealth.failed,
+    drives: driveHealth.failed,
+    psus: psuHealth.failed
+  };
+
+  // Count servers (estimate from processors - typically 2 per server)
+  const estimatedServers = Math.ceil(processors.length / 2);
+  const serversWithFailures = new Set(
+    [...processors, ...memory, ...drives]
+      .filter((c: any) => 
+        (c.OperState || c.operState) === 'inoperable' || 
+        (c.DiskState || c.diskState) === 'failed'
+      )
+      .map((c: any) => c.Dn || c.dn || '')
+      .filter(dn => dn)
+      .map(dn => dn.split('/')[0])
+  ).size;
+
   return {
-    healthStatus: failedComponents.processors > 0 || failedComponents.memory > 0 ? 'DEGRADED' : 'HEALTHY',
-    totalServers,
-    healthyServers,
-    thermalStatus: 'NORMAL',
-    powerRedundancy: 'FULL',
-    failedComponents
+    healthStatus: failedComponentCount > 0 ? 'DEGRADED' : degradedComponents > 0 ? 'WARNING' : 'HEALTHY',
+    totalServers: estimatedServers,
+    healthyServers: estimatedServers - serversWithFailures,
+    degradedServers: serversWithFailures,
+    failedServers: serversWithFailures,
+    thermalStatus: thermalStats.averageTemp > 85 ? 'WARNING' : thermalStats.averageTemp > 95 ? 'CRITICAL' : 'NORMAL',
+    powerRedundancy: psuHealth.failed > 0 ? 'DEGRADED' : psuHealth.total > 1 ? 'FULL' : 'NONE',
+    failedComponents,
+    componentDetails: {
+      processors: processorHealth,
+      memory: memoryHealth,
+      drives: driveHealth,
+      psus: psuHealth,
+      fans: fanHealth
+    },
+    totalComponents,
+    healthyComponents,
+    degradedComponents
   };
 }
 
