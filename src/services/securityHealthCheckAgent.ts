@@ -656,12 +656,13 @@ function analyzeFirmware(firmware: any[]): any {
 }
 
 function analyzeHardware(hardware: any, thermalStats: any, powerStats: any): any {
-  // Extract component arrays from hardware object
-  const processors = hardware.processors || [];
-  const memory = hardware.memory || [];
-  const drives = hardware.drives || [];
-  const psus = hardware.psus || [];
-  const fans = hardware.fans || [];
+  // Extract component arrays from hardware object (with null safety)
+  const hardwareObj = hardware || {};
+  const processors = hardwareObj.processors || [];
+  const memory = hardwareObj.memory || [];
+  const drives = hardwareObj.drives || [];
+  const psus = hardwareObj.psus || [];
+  const fans = hardwareObj.fans || [];
 
   // Analyze processor health
   const processorHealth = {
@@ -774,13 +775,18 @@ function analyzeHardware(hardware: any, thermalStats: any, powerStats: any): any
       .map(dn => dn.split('/')[0])
   ).size;
 
+  // Safely calculate thermal status
+  const thermalStatsObj = thermalStats || { averageTemp: 0 };
+  const avgTemp = thermalStatsObj.averageTemp || 0;
+  const thermalStatus = avgTemp > 95 ? 'CRITICAL' : avgTemp > 85 ? 'WARNING' : 'NORMAL';
+
   return {
     healthStatus: failedComponentCount > 0 ? 'DEGRADED' : degradedComponents > 0 ? 'WARNING' : 'HEALTHY',
     totalServers: estimatedServers,
     healthyServers: estimatedServers - serversWithFailures,
     degradedServers: serversWithFailures,
     failedServers: serversWithFailures,
-    thermalStatus: thermalStats.averageTemp > 85 ? 'WARNING' : thermalStats.averageTemp > 95 ? 'CRITICAL' : 'NORMAL',
+    thermalStatus,
     powerRedundancy: psuHealth.failed > 0 ? 'DEGRADED' : psuHealth.total > 1 ? 'FULL' : 'NONE',
     failedComponents,
     componentDetails: {
@@ -811,23 +817,26 @@ function analyzeSecurity(licenses: any[], tpms: any[], bootSecurity: any[]): any
 }
 
 function analyzeCompliance(operatingSystems: any[], policies: any[], hyperflexCompat: any): any {
-  const certifiedOsVersions = operatingSystems.length;
+  const osVersions = Array.isArray(operatingSystems) ? operatingSystems : [];
+  const policiesList = Array.isArray(policies) ? policies : [];
+  const certifiedOsVersions = osVersions.length;
 
   return {
     overallStatus: 'COMPLIANT',
-    policyCount: policies.length,
+    policyCount: policiesList.length,
     certifiedOsVersions,
     hyperlexCompatibilityStatus: hyperflexCompat ? 'COMPATIBLE' : 'UNKNOWN'
   };
 }
 
 function analyzePerformance(topResources: any[]): any {
+  const resources = Array.isArray(topResources) ? topResources : [];
   return {
     averageCpuUtilization: 35,
     peakCpuUtilization: 78,
     averageMemoryUtilization: 45,
     peakMemoryUtilization: 82,
-    highUtilizationServers: topResources.slice(0, 3).map((r: any) => r.name || 'Unknown')
+    highUtilizationServers: resources.slice(0, 3).map((r: any) => r.name || r.Name || 'Unknown')
   };
 }
 
