@@ -68,7 +68,7 @@ Safe, read-only tools for basic Intersight operations:
   * `list_firmware_running` - List running firmware versions
   * `list_licenses` - List license information
   * `list_hcl_operating_systems` - List supported operating systems
-  * `list_hcl_operating_system_vendors` - List OS vendors
+  * `get_ansible_examples` - Get Ansible automation examples
   * `list_hcl_hyperflex_compatibility` - List HyperFlex compatibility
   * `list_equipment_io_cards` - List IO cards
   * `list_equipment_sys_io_ctrls` - List system IO controllers

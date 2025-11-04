@@ -100,7 +100,7 @@ const CORE_65_TOOLS = [
   'list_firmware_running',
   'list_licenses',
   'list_hcl_operating_systems',
-  'list_hcl_operating_system_vendors',
+  'get_ansible_examples',
   'list_hcl_hyperflex_compatibility',
   'list_equipment_io_cards',
   'list_equipment_sys_io_ctrls',
