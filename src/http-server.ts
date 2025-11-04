@@ -76,14 +76,14 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    version: '1.0.15',
+    version: '1.0.16',
     configuration: {
       toolMode: mcpConfig.serverConfig.toolSelectionMode,
       enabledTools: enabledTools.length,
       totalTools: allTools.length,
       enableAllTools: mcpConfig.serverConfig.enableAllTools
     },
-    description: 'Intersight MCP HTTP Server - v1.0.15 with Tool Configuration'
+    description: 'Intersight MCP HTTP Server - v1.0.16 with Tool Configuration'
   });
 });
 
@@ -91,7 +91,7 @@ app.get('/health', (req: Request, res: Response) => {
 app.get('/api/info', (req: Request, res: Response) => {
   res.json({
     name: 'Intersight MCP Server',
-    version: '1.0.15',
+    version: '1.0.16',
     description: 'HTTP API for Cisco Intersight MCP tools with configurable tool modes',
     configuration: {
       toolMode: mcpConfig.serverConfig.toolSelectionMode,
