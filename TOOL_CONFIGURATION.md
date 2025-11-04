@@ -10,15 +10,88 @@ The Intersight MCP Server supports configurable tool sets to balance functionali
 
 Safe, read-only tools for basic Intersight operations:
 
-- ✅ Inventory & Discovery (8 tools)
-- ✅ Monitoring & Alarms (3 tools)
-- ✅ Policy Management (12 tools)
-- ✅ Resource Pools (6 tools)
-- ✅ Telemetry & Metrics (15 tools)
-- ✅ Hardware & Firmware (8 tools)
-- ✅ Fabric & Network (6 tools)
-- ✅ Workflows & System (4 tools)
-- ✅ Code Examples (3 tools)
+- ✅ **Inventory & Discovery (8 tools)**
+  * `list_compute_servers` - List all compute servers
+  * `get_server_details` - Get detailed server information
+  * `list_chassis` - List equipment chassis
+  * `list_fabric_interconnects` - List fabric interconnects
+  * `list_compute_blades` - List blade servers
+  * `list_compute_rack_units` - List rack-mounted servers
+  * `list_compute_boards` - List server motherboards
+  * `search_resources` - Search resources by type
+
+- ✅ **Monitoring & Alarms (3 tools)**
+  * `list_alarms` - List active alarms
+  * `get_tam_advisory_count` - Get advisory count by severity
+  * `list_tam_advisories` - List technical advisories
+
+- ✅ **Policy Management (12 tools)**
+  * `list_policies` - List policies by type
+  * `get_policy` - Get specific policy details
+  * `list_server_profiles` - List all server profiles
+  * `get_server_profile` - Get server profile details
+  * `list_bios_units` - List BIOS/UEFI firmware units
+  * `list_boot_device_boot_modes` - List boot device modes
+  * `list_adapter_config_policies` - List adapter configuration policies
+  * `get_adapter_config_policy` - Get adapter policy details
+  * `list_lan_connectivity_policies` - List LAN connectivity policies
+  * `get_lan_connectivity_policy` - Get LAN policy details
+  * `list_vnics` - List virtual network interfaces
+  * `get_vnic` - Get vNIC details
+
+- ✅ **Resource Pools (6 tools)**
+  * `list_pools` - List pools by type
+  * `list_ippool_blocks` - List IP pool blocks
+  * `list_macpool_blocks` - List MAC pool blocks
+  * `list_fcpool_blocks` - List Fibre Channel pool blocks
+  * `get_ippool_block` - Get IP pool block details
+  * `get_macpool_block` - Get MAC pool block details
+
+- ✅ **Telemetry & Metrics (15 tools)**
+  * `get_server_telemetry` - Get server telemetry data
+  * `get_chassis_telemetry` - Get chassis telemetry data
+  * `get_adapter_telemetry` - Get network adapter telemetry
+  * `get_top_resources` - Get top resources by metric
+  * `list_processor_units` - List processor units
+  * `list_memory_units` - List memory units
+  * `list_storage_controllers` - List storage controllers
+  * `list_physical_drives` - List physical drives
+  * `get_power_statistics` - Get power consumption stats
+  * `get_thermal_statistics` - Get temperature statistics
+  * `list_fan_modules` - List fan modules
+  * `list_psu_units` - List power supply units
+  * `list_storage_virtual_drives` - List virtual drives
+  * `list_pci_devices` - List PCI devices
+  * `list_graphics_cards` - List graphics cards/GPUs
+
+- ✅ **Hardware & Firmware (8 tools)**
+  * `list_firmware_running` - List running firmware versions
+  * `list_licenses` - List license information
+  * `list_hcl_operating_systems` - List supported operating systems
+  * `list_hcl_operating_system_vendors` - List OS vendors
+  * `list_hcl_hyperflex_compatibility` - List HyperFlex compatibility
+  * `list_equipment_io_cards` - List IO cards
+  * `list_equipment_sys_io_ctrls` - List system IO controllers
+  * `list_management_controllers` - List management controllers
+
+- ✅ **Fabric & Network (6 tools)**
+  * `list_fabric_vlans` - List fabric VLANs
+  * `get_fabric_vlan` - Get VLAN details
+  * `list_fabric_vsans` - List fabric VSANs
+  * `get_fabric_vsan` - Get VSAN details
+  * `list_fabric_port_channels` - List port channels
+  * `get_fabric_port_channel` - Get port channel details
+
+- ✅ **Workflows & System (4 tools)**
+  * `list_workflows` - List workflow executions
+  * `get_workflow` - Get workflow details
+  * `list_top_systems` - List top-level systems
+  * `get_top_system` - Get system details
+
+- ✅ **Code Examples (3 tools)**
+  * `get_powershell_examples` - Get PowerShell SDK examples
+  * `get_python_examples` - Get Python SDK examples
+  * `get_terraform_examples` - Get Terraform examples
 
 ### 2. All Tools Mode - 199+ Complete Toolset
 
