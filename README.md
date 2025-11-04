@@ -125,30 +125,6 @@ The Intersight MCP Server includes an **intelligent Security & Health Check Agen
 - **Actionable Recommendations**: Four-tier guidance (Immediate, Short-term, Medium-term, Long-term)
 - **Executive Reports**: Comprehensive JSON reports with detailed findings and remediation steps
 
-### Example Report Sections
-
-```json
-{
-  "status": "PARTIAL",
-  "summary": {
-    "overallScore": 91,
-    "securityScore": 87,
-    "healthScore": 87,
-    "complianceScore": 100
-  },
-  "alarms": { "critical": 1, "warning": 1 },
-  "advisories": { "critical": 2, "securityAdvisories": 1, "fieldNotices": 1 },
-  "firmware": { "outdated": 2, "updateRecommendations": [...] },
-  "hardware": { "status": "HEALTHY", "thermalStatus": "NORMAL" },
-  "security": { "tpmStatus": "PRESENT", "secureBootEnabled": true },
-  "recommendations": {
-    "immediate": ["Resolve critical alarms", "Apply firmware updates"],
-    "shortTerm": ["Update firmware components", "Renew expiring licenses"],
-    "mediumTerm": ["Implement update policies", "Deploy monitoring"],
-    "longTerm": ["Plan infrastructure modernization"]
-  }
-}
-```
 
 For detailed agent documentation, see [SECURITY_HEALTH_AGENT.md](SECURITY_HEALTH_AGENT.md).
 
