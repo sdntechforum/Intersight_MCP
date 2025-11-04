@@ -5,7 +5,7 @@ An MCP (Model Context Protocol) server that enables LLMs to interact with Cisco 
 
 The server supports two configuration modes:
 
-- **🛡️ Core Mode (Default)**: 65 essential read-only tools for safe exploration
+- **🛡️ Core Mode (Default)**: 66 essential read-only tools for safe exploration
 - **🚀 All Tools Mode**: 199+ complete toolset with full CRUD capabilities
 
 See [TOOL_CONFIGURATION.md](TOOL_CONFIGURATION.md) for detailed configuration options.
@@ -162,7 +162,7 @@ For detailed agent documentation, see [SECURITY_HEALTH_AGENT.md](SECURITY_HEALTH
 
 **Tool Configuration & Security Enhancement**
 - ✅ **Configurable Tool Modes**
-  - Core Mode (Default): 65 essential read-only tools for safe exploration
+  - Core Mode (Default): 66 essential read-only tools for safe exploration
   - All Tools Mode: 199+ complete toolset with full CRUD capabilities
   - Environment variable configuration: `INTERSIGHT_TOOL_MODE=core|all`
 - ✅ **Enhanced Security**
@@ -173,6 +173,11 @@ For detailed agent documentation, see [SECURITY_HEALTH_AGENT.md](SECURITY_HEALTH
   - JSON configuration file support (`intersight-mcp-server-config.json`)
   - Environment variable overrides for easy deployment
   - Multiple server instances with different tool sets
+- ✅ **Security & Health Check Agent**
+  - `generate_security_health_report` - Comprehensive infrastructure analysis
+  - Analyzes alarms, advisories, CVEs, firmware, hardware health
+  - Security posture assessment with scoring (0-100)
+  - Actionable recommendations by priority
 - ✅ **Documentation & Testing**
   - Comprehensive tool configuration guide
   - Verified core mode safety and all tools functionality
