@@ -87,9 +87,10 @@ Safe, read-only tools for basic Intersight operations:
   * `list_top_systems` - List top-level systems
   * `get_top_system` - Get system details
 
-- **Code Examples (3 tools)**
+- **Code Examples (4 tools)**
   * `get_python_examples` - Get Python SDK programming examples
   * `get_powershell_examples` - Get PowerShell module examples
+  * `get_terraform_examples` - Get Terraform infrastructure examples
   * `get_ansible_examples` - Get Ansible automation examples
 
 ### 2. All Tools Mode - 199+ Complete Toolset
