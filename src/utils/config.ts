@@ -221,7 +221,10 @@ export function loadConfig(): IntersightConfig {
   const apiKeyId = process.env.INTERSIGHT_API_KEY_ID;
   const apiSecretKeyPath = process.env.INTERSIGHT_API_SECRET_KEY_PATH;
   const apiSecretKey = process.env.INTERSIGHT_API_SECRET_KEY;
-  const baseUrl = process.env.INTERSIGHT_BASE_URL || 'https://intersight.com/api/v1';
+  let baseUrl = process.env.INTERSIGHT_BASE_URL || 'https://intersight.com/api/v1';
+  if (!baseUrl.includes('/api/v1')) {
+    baseUrl = baseUrl.replace(/\/$/, '') + '/api/v1';
+  }
 
   if (!apiKeyId) {
     throw new Error('INTERSIGHT_API_KEY_ID environment variable is required');
